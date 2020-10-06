@@ -23,17 +23,17 @@
 
         function createBoard(board) {
             board.innerHTML = "";
-            for (let i = 0; i < 3; ++i) {
-                boardView[i] = [];
-                for (let j = 0; j < 3; ++j) {
-                    let cell = document.createElement("div");
-                    cell.classList.add("cell");
-                    cell.innerText = "";
-                    cell.addEventListener("click", () => move(j, i));
-                    board.appendChild(cell);
-                    boardView[i][j] = cell;
+            for (let i = 0; i < 9; ++i) {
+                let x = i % 3, y = (i - x) / 3;
+                if (y && x == 0) {
+                    board.appendChild(document.createElement("br"));
                 }
-                board.appendChild(document.createElement("br"));
+                let cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.innerText = "";
+                cell.addEventListener("click", () => move(x, y));
+                board.appendChild(cell);
+                boardView[i] = cell;
             }
         }
 
@@ -41,19 +41,18 @@
         createBoard(board);
 
         function show(pattern) {
-            for (let i = 0; i < 3; ++i) {
-                for (let j = 0; j < 3; ++j) {
-                    let cell = boardView[i][j];
-                    cell.innerText = pattern[i][j] === 2 ? "❌" :
-                        pattern[i][j] === 1 ? "⭕" : "";
-                }
+            for (let i = 0; i < 9; ++i) {
+                let cell = boardView[i];
+                let status = pattern.getIdColor(i);
+                cell.innerText = status === 2 ? "❌" :
+                    status === 1 ? "⭕" : "";
             }
         }
 
         function move(x, y) {
             let res = game.move(x, y);
             if (res != MoveResult.CANTMOVE) {
-                show(game.pattern.board);
+                show(game.pattern);
                 if (res == MoveResult.WIN) {
                     alert(game.color == 2 ? "❌ is winner!" : "⭕ is winner!");
                 }
@@ -63,7 +62,7 @@
             }
         }
 
-        show(game.pattern.board);
+        show(game.pattern);
     </script>
 </head>
 
