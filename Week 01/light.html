@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .light {
+            width: 100px;
+            height: 100px;
+            display: inline-block;
+            border: solid 1px black;
+            border-radius: 50px;
+            vertical-align: middle;
+            margin: 25px;
+        }
+
+        .green {
+            background-color: green;
+        }
+
+        .red {
+            background-color: red;
+        }
+
+        .yellow {
+            background-color: yellow;
+        }
+
+        .light-out {
+            background-color: gray;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="green" class="light green light-out"></div>
+    <div id="yellow" class="light yellow light-out"></div>
+    <div id="red" class="light red light-out"></div>
+    <button id="switch">Switch</button>
+    <script>
+        let lights = [
+            document.getElementById('green'),
+            document.getElementById('yellow'),
+            document.getElementById('red'),
+        ];
+        
+        function delay(time_ms) {
+            return new Promise(resolve => setTimeout(resolve, time_ms));
+        }
+
+        function happen(element, eventName) {
+            return new Promise(resolve =>
+                element.addEventListener(eventName, resolve, { once: true }));
+        }
+
+        function changeColor(color) {
+            lights.forEach(light => light.classList.add('light-out'));
+            let light = document.getElementById(color);
+            if (light) light.classList.remove('light-out');
+        }
+
+        let switcher = document.getElementById('switch');
+
+        async function switchLight() {
+            while (true) {
+                changeColor('green');
+                await delay(10000);
+                // await happen(switcher, 'click');
+                changeColor('yellow');
+                await delay(2000);
+                // await happen(switcher, 'click');
+                changeColor('red');
+                await delay(5000);
+                // await happen(switcher, 'click');
+            }
+        }
+
+        switchLight();
+    </script>
+</body>
+
+</html>
