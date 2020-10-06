@@ -96,7 +96,7 @@ export class GamePattern {
             return { point, result: 1 }
         }
         let result = -2;
-        for (let i = 0; i < 3; ++i) {
+        search: for (let i = 0; i < 3; ++i) {
             for (let j = 0; j < 3; ++j) {
                 if (this.board[i][j]) {
                     continue;
@@ -108,6 +108,9 @@ export class GamePattern {
                 if (- r > result) {
                     result = -r;
                     point = [j, i];
+                }
+                if (result == 1) {
+                    break search;
                 }
             }
         }
