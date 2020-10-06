@@ -29,7 +29,7 @@ export class GamePattern {
 
     clone() {
         let res = Object.create(GamePattern.prototype);
-        res.board = JSON.parse(JSON.stringify(this.board));
+        res.board = Object.create(this.board);
         return res;
     }
 
