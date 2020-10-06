@@ -49,6 +49,18 @@
             }
         }
 
+        function computerMove() {
+            let best = game.bestChoice();
+            if (best.point) {
+                let pos = best.point;
+                let res = game.move(pos[0], pos[1]);
+                show(game.pattern);
+                if (res == MoveResult.WIN) {
+                    alert(game.color == 2 ? "❌ is winner!" : "⭕ is winner!");
+                }
+            }
+        }
+
         function move(x, y) {
             let res = game.move(x, y);
             if (res != MoveResult.CANTMOVE) {
@@ -57,13 +69,12 @@
                     alert(game.color == 2 ? "❌ is winner!" : "⭕ is winner!");
                 }
                 else {
-                    let player = game.color == 2 ? "❌" : "⭕";
+                    computerMove();
                     let best = game.bestChoice();
                     let result = best.result == 1 ? 'win' :
                         best.result == -1 ? 'lost' : 'draw';
-                    console.log(`${player}${
-                        best.point ? ` play (${best.point[0]},${best.point[1]})` : ''
-                    } result ${result}`);
+                    console.log(`${best.point ? `play (${best.point[0]},${best.point[1]}) ` : ''
+                        }result ${result}`);
                 }
             }
         }
