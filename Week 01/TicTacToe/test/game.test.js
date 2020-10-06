@@ -1,6 +1,8 @@
 import { describe, it } from 'mocha';
 import { assert } from 'chai';
-import { GamePattern, GameControl, MoveResult } from '../src/game';
+import {
+    GamePattern, GameControl, MoveResult, PlayerResult
+} from '../src/game';
 
 describe('game test', function () {
     it('set & check value', function () {
@@ -58,7 +60,22 @@ describe('game test', function () {
         pattern.setColor(1, 2, 2);
         pattern.setColor(2, 2, 2);
         assert.equal(pattern.willWin(1), null);
-        assert.notEqual(pattern.willWin(2), null);
+        let p;
+        assert.notEqual(p = pattern.willWin(2), null);
+        let best = pattern.bestChice(2);
+        assert.equal(best.result, PlayerResult.WIN);
+        assert.deepEqual(best.point, p);
+    })
+    it('test best choice', function () {
+        let pattern = new GamePattern;
+        pattern.setColor(1, 0, 2);
+        pattern.setColor(1, 1, 1);
+        let result = pattern.bestChice(1);
+        assert.equal(result.result, PlayerResult.WIN);
+        pattern.setColor(1, 0, 0);
+        pattern.setColor(0, 0, 2);
+        result = pattern.bestChice(1);
+        assert.equal(result.result, PlayerResult.DRAW);
     })
     it('test round of game', function () {
         let game = new GameControl;

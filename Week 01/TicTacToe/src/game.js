@@ -1,3 +1,7 @@
+export const PlayerResult = {
+    WIN: 1, DRAW: 0, FAIL: -1,
+}
+
 export class GamePattern {
     constructor() {
         this.board = [
@@ -84,6 +88,30 @@ export class GamePattern {
             }
         }
         return null;
+    }
+
+    bestChice(color) {
+        let point;
+        if (point = this.willWin(color)) {
+            return { point, result: 1 }
+        }
+        let result = -2;
+        for (let i = 0; i < 3; ++i) {
+            for (let j = 0; j < 3; ++j) {
+                if (this.board[i][j]) {
+                    continue;
+                }
+                let tmp = this.clone();
+                tmp.setColor(j, i, color);
+                let r = tmp.bestChice(3 - color).result;
+
+                if (- r > result) {
+                    result = -r;
+                    point = [j, i];
+                }
+            }
+        }
+        return { point, result: point ? result : 0 };
     }
 }
 
