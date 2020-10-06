@@ -53,12 +53,12 @@ describe('game test', function () {
         let pattern = new GamePattern;
         pattern.setColor(1, 0, 1);
         pattern.setColor(1, 1, 1);
-        assert.equal(pattern.willWin(1), true);
-        assert.equal(pattern.willWin(2), false);
+        assert.deepEqual(pattern.willWin(1), [2, 1]);
+        assert.equal(pattern.willWin(2), null);
         pattern.setColor(1, 2, 2);
         pattern.setColor(2, 2, 2);
-        assert.equal(pattern.willWin(1), false);
-        assert.equal(pattern.willWin(2), true);
+        assert.equal(pattern.willWin(1), null);
+        assert.notEqual(pattern.willWin(2), null);
     })
     it('test round of game', function () {
         let game = new GameControl;

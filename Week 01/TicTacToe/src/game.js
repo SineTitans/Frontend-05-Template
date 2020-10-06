@@ -79,11 +79,11 @@ export class GamePattern {
                 let tmp = this.clone();
                 tmp.setColor(i, j, color);
                 if (tmp.check(color)) {
-                    return true;
+                    return [j, i];
                 }
             }
         }
-        return false;
+        return null;
     }
 }
 
@@ -115,6 +115,6 @@ export class GameControl {
     }
 
     isWillWin() {
-        return this.pattern.willWin(this.color);
+        return this.pattern.willWin(this.color) != null;
     }
 }
