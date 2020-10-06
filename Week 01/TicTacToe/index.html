@@ -56,8 +56,14 @@
                 if (res == MoveResult.WIN) {
                     alert(game.color == 2 ? "❌ is winner!" : "⭕ is winner!");
                 }
-                else if (game.isWillWin()) {
-                    console.log(game.color == 2 ? "❌ will win!" : "⭕ will win!");
+                else {
+                    let player = game.color == 2 ? "❌" : "⭕";
+                    let best = game.bestChoice();
+                    let result = best.result == 1 ? 'win' :
+                        best.result == -1 ? 'lost' : 'draw';
+                    console.log(`${player}${
+                        best.point ? ` play (${best.point[0]},${best.point[1]})` : ''
+                    } result ${result}`);
                 }
             }
         }

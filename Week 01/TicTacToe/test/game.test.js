@@ -92,4 +92,9 @@ describe('game test', function () {
         assert.equal(game.move(2, 1), MoveResult.WIN);
         assert.equal(game.move(0, 2), MoveResult.CANTMOVE);
     })
+    it('initial best choice', function () {
+        let game = new GameControl;
+        let bestFisrt = game.bestChoice();
+        assert.equal(bestFisrt.result, PlayerResult.DRAW);
+    })
 })

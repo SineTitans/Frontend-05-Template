@@ -154,4 +154,8 @@ export class GameControl {
     isWillWin() {
         return this.pattern.willWin(this.color) != null;
     }
+
+    bestChoice() {
+        return this.pattern.bestChice(this.color);
+    }
 }
