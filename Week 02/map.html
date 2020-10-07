@@ -133,21 +133,40 @@
 
             let queue = new SortedQueue(null, (a, b) => distToEnd(a) - distToEnd(b));
 
-            async function insert(x, y, parNum) {
+            let insertOrder = [];
+
+            async function insert(x, y, par, order) {
                 if (x < 0 || x >= 100 || y < 0 || y >= 100)
                     return false;
+                let parNum = par[1] * 100 + par[0] + 2;
                 let idx = y * 100 + x;
-                if (map[idx])
+                if (map[idx]) {
+                    if (map[idx] != 1) {
+                        if (order < insertOrder[idx]) {
+                            map[idx] = parNum;
+                            insertOrder[idx] = order;
+                        }
+                        else if (order == insertOrder[idx]) {
+                            let oldPar = map[idx] - 2;
+                            let ox = oldPar % 100;
+                            let oy = (oldPar - ox) / 100;
+                            if (distToEnd(par) < distToEnd([ox, oy])) {
+                                map[idx] = parNum;
+                            }
+                        }
+                    }
                     return false;
+                }
 
-                await delay(30);
+                await delay(1);
                 domCells[idx].style.backgroundColor = "lightgreen";
                 map[idx] = parNum;
+                insertOrder[idx] = order;
                 queue.give([x, y]);
                 return true;
             }
 
-            if (await insert(start[0], start[1])) {
+            if (await insert(start[0], start[1], [0, 0], 0)) {
                 while (queue.size) {
                     let [x, y] = queue.take();
                     // console.log(x, y);
@@ -164,17 +183,18 @@
 
                         return path;
                     }
-                    let parNum = y * 100 + x + 2;
 
-                    await insert(x - 1, y, parNum);
-                    await insert(x, y - 1, parNum);
-                    await insert(x + 1, y, parNum);
-                    await insert(x, y + 1, parNum);
+                    let nextOrder = insertOrder[y * 100 + x] + 1;
 
-                    await insert(x - 1, y + 1, parNum);
-                    await insert(x - 1, y - 1, parNum);
-                    await insert(x + 1, y - 1, parNum);
-                    await insert(x + 1, y + 1, parNum);
+                    await insert(x - 1, y, [x, y], nextOrder);
+                    await insert(x, y - 1, [x, y], nextOrder);
+                    await insert(x + 1, y, [x, y], nextOrder);
+                    await insert(x, y + 1, [x, y], nextOrder);
+
+                    await insert(x - 1, y + 1, [x, y], nextOrder);
+                    await insert(x - 1, y - 1, [x, y], nextOrder);
+                    await insert(x + 1, y - 1, [x, y], nextOrder);
+                    await insert(x + 1, y + 1, [x, y], nextOrder);
                 }
             }
             return [];
