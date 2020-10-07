@@ -117,6 +117,7 @@
                     // console.log(x, y);
                     if (x === end[0] && y === end[1]) {
                         let path = [end];
+                        domCells[y * 100 + x].style.backgroundColor = "purple";
                         while (x != start[0] || y != start[1]) {
                             let parNum = map[y * 100 + x] - 2;
                             x = parNum % 100;
