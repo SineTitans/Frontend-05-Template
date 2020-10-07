@@ -97,7 +97,7 @@
             refresh(map);
             let queue = [];
 
-            async function insert(x, y) {
+            async function insert(x, y, parNum) {
                 if (x < 0 || x >= 100 || y < 0 || y >= 100)
                     return false;
                 let idx = y * 100 + x;
@@ -106,7 +106,7 @@
 
                 await delay(30);
                 domCells[idx].style.backgroundColor = "lightgreen";
-                map[idx] = 2;
+                map[idx] = parNum;
                 queue.push([x, y]);
                 return true;
             }
@@ -116,15 +116,31 @@
                     let [x, y] = queue.shift();
                     // console.log(x, y);
                     if (x === end[0] && y === end[1]) {
-                        return true;
+                        let path = [end];
+                        while (x != start[0] || y != start[1]) {
+                            let parNum = map[y * 100 + x] - 2;
+                            x = parNum % 100;
+                            y = (parNum - x) / 100;
+                            path.push([x, y]);
+                            domCells[parNum].style.backgroundColor = "purple";
+                        }
+
+                        return path;
                     }
-                    await insert(x - 1, y);
-                    await insert(x, y - 1);
-                    await insert(x + 1, y);
-                    await insert(x, y + 1);
+                    let parNum = y * 100 + x + 2;
+
+                    await insert(x - 1, y, parNum);
+                    await insert(x, y - 1, parNum);
+                    await insert(x + 1, y, parNum);
+                    await insert(x, y + 1, parNum);
+
+                    await insert(x - 1, y + 1, parNum);
+                    await insert(x - 1, y - 1, parNum);
+                    await insert(x + 1, y - 1, parNum);
+                    await insert(x + 1, y + 1, parNum);
                 }
             }
-            return false;
+            return [];
         }
     </script>
 </body>
