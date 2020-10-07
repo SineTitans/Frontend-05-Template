@@ -42,6 +42,8 @@
         let container = document.getElementById('container');
         let mousedown = false, clearmode = false;
 
+        let domCells = [];
+
         for (let i = 0; i < 10000; ++i) {
             let cell = document.createElement('div');
             cell.classList.add('cell');
@@ -63,6 +65,19 @@
             })
 
             container.appendChild(cell);
+            domCells.push(cell);
+        }
+
+        function refresh(map) {
+            for (let i = 0; i < 10000; ++i) {
+                let cell = domCells[i];
+                if (map[i] === 1) {
+                    cell.style.backgroundColor = "black";
+                }
+                else {
+                    cell.style.backgroundColor = "";
+                }
+            }
         }
 
         document.addEventListener("mousedown", function (e) {
@@ -73,31 +88,41 @@
         document.addEventListener("mouseup", () => mousedown = false);
         document.addEventListener("contextmenu", e => e.preventDefault());
 
-        function path(map, start, end) {
-            map = Object.create(map);
-            let queue = [start];
-            map[start[1] * 100 + start[0]] = 2;
+        function delay(time_ms) {
+            return new Promise(resolve => setTimeout(resolve, time_ms));
+        }
 
-            function insert(x, y) {
+        async function path(map, start, end) {
+            map = Object.create(map);
+            refresh(map);
+            let queue = [];
+
+            async function insert(x, y) {
                 if (x < 0 || x >= 100 || y < 0 || y >= 100)
-                    return;
-                if (map[y * 100 + x])
-                    return;
-                
-                map[y * 100 + x] = 2;
+                    return false;
+                let idx = y * 100 + x;
+                if (map[idx])
+                    return false;
+
+                await delay(30);
+                domCells[idx].style.backgroundColor = "lightgreen";
+                map[idx] = 2;
                 queue.push([x, y]);
+                return true;
             }
 
-            while(queue.length) {
-                let [x, y] = queue.shift();
-                console.log(x, y);
-                if (x === end[0] && y === end[1]) {
-                    return true;
+            if (await insert(start[0], start[1])) {
+                while (queue.length) {
+                    let [x, y] = queue.shift();
+                    // console.log(x, y);
+                    if (x === end[0] && y === end[1]) {
+                        return true;
+                    }
+                    await insert(x - 1, y);
+                    await insert(x, y - 1);
+                    await insert(x + 1, y);
+                    await insert(x, y + 1);
                 }
-                insert(x - 1, y);
-                insert(x, y - 1);
-                insert(x + 1, y);
-                insert(x, y + 1);
             }
             return false;
         }
