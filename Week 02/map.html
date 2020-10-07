@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .cell {
+            display: inline-block;
+            line-height: 7px;
+            width: 6px;
+            height: 6px;
+            background-color: gray;
+            border-bottom: solid 1px white;
+            border-right: solid 1px white;
+            vertical-align: top;
+        }
+
+        #container {
+            line-height: 7px;
+            width: 701px;
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <button onclick="localStorage['map']=JSON.stringify(map)">
+        save
+    </button>
+    <script>
+        let map = (function () {
+            let saved = localStorage['map'];
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            else {
+                return Array(10000).fill(0);
+            }
+        })();
+
+        let container = document.getElementById('container');
+        let mousedown = false, clearmode = false;
+
+        for (let i = 0; i < 10000; ++i) {
+            let cell = document.createElement('div');
+            cell.classList.add('cell');
+
+            if (map[i] === 1) {
+                cell.style.backgroundColor = "black";
+            }
+
+            cell.addEventListener("mousemove", function () {
+                if (!mousedown) return;
+                if (clearmode) {
+                    cell.style.backgroundColor = "";
+                    map[i] = 0;
+                }
+                else {
+                    cell.style.backgroundColor = "black";
+                    map[i] = 1;
+                }
+            })
+
+            container.appendChild(cell);
+        }
+
+        document.addEventListener("mousedown", function (e) {
+            mousedown = true;
+            clearmode = (e.which === 3);
+        })
+
+        document.addEventListener("mouseup", () => mousedown = false);
+        document.addEventListener("contextmenu", e => e.preventDefault());
+
+        function path(map, start, end) {
+            map = Object.create(map);
+            let queue = [start];
+            map[start[1] * 100 + start[0]] = 2;
+
+            function insert(x, y) {
+                if (x < 0 || x >= 100 || y < 0 || y >= 100)
+                    return;
+                if (map[y * 100 + x])
+                    return;
+                
+                map[y * 100 + x] = 2;
+                queue.push([x, y]);
+            }
+
+            while(queue.length) {
+                let [x, y] = queue.shift();
+                console.log(x, y);
+                if (x === end[0] && y === end[1]) {
+                    return true;
+                }
+                insert(x - 1, y);
+                insert(x, y - 1);
+                insert(x + 1, y);
+                insert(x, y + 1);
+            }
+            return false;
+        }
+    </script>
+</body>
+
+</html>
