@@ -122,6 +122,88 @@
                 return this.data.length;
             }
         }
+        
+        class Heap {
+            static #PushHeapAtPos(data, pos, top, val, comp = (a, b) => a - b) {
+                for (let i = (pos - 1) >> 1; top < pos && comp(data[i], val) < 0; i = (pos - 1) >> 1) {
+                    data[pos] = data[i];
+                    pos = i;
+                }
+                data[pos] = val;
+            }
+
+            static #PopHeapAtPos(data, pos, bottom, val, comp = (a, b) => a - b) {
+                const top = pos;
+                let idx = pos;
+                const Max_Seq_non_Leaf = (bottom - 1) >> 1;
+                while (idx < Max_Seq_non_Leaf) {
+                    idx = 2 * idx + 2;
+                    if (comp(data[idx], data[idx - 1]) < 0) {
+                        --idx;
+                    }
+                    data[pos] = data[idx];
+                    pos = idx;
+                }
+                if (idx == Max_Seq_non_Leaf && bottom % 2 == 0) {
+                    data[pos] = data[bottom - 1];
+                    pos = bottom - 1;
+                }
+                Heap.#PushHeapAtPos(data, pos, top, val, comp);
+            }
+
+            static make_heap(data, count, comp = (a, b) => a - b) {
+                const bottom = count;
+                for (let pos = bottom >> 1; 0 < pos;) {
+                    --pos;
+                    const val = data[pos];
+                    Heap.#PopHeapAtPos(data, pos, bottom, val, comp);
+                }
+            }
+
+            static push_heap(data, count, comp) {
+                if (2 <= count) {
+                    const _Val = data[--count];
+                    Heap.#PushHeapAtPos(data, count, 0, _Val, comp);
+                }
+            }
+
+            static pop_heap(data, count, comp) {
+                if (2 <= count) {
+                    --count;
+                    const val = data[count];
+                    data[count] = data[0];
+                    Heap.#PopHeapAtPos(data, 0, count, val, comp);
+                }
+            }
+
+            constructor(cont, comp = (a, b) => a - b) {
+                this.comp = comp;
+                this.c = cont ? cont.slice() : [];
+                Heap.make_heap(this.c, this.c.length, this.comp);
+            }
+
+            get size() {
+                return this.c.length;
+            }
+
+            top() {
+                return this.c[0];
+            }
+
+            push(val) {
+                this.c.push(val);
+                Heap.push_heap(this.c, this.c.length, this.comp);
+            }
+
+            pop() {
+                Heap.pop_heap(this.c, this.c.length, this.comp);
+                return this.c.pop();
+            }
+
+            clear() {
+                this.c = [];
+            }
+        }
 
         async function findPath(map, start, end) {
             map = Object.create(map);
@@ -131,7 +213,7 @@
                 return (point[0] - end[0]) ** 2 + (point[1] - end[1]) ** 2;
             }
 
-            let queue = new SortedQueue(null, (a, b) => distToEnd(a) - distToEnd(b));
+            let queue = new Heap(null, (a, b) => distToEnd(b) - distToEnd(a));
 
             let insertOrder = [];
 
@@ -162,13 +244,13 @@
                 domCells[idx].style.backgroundColor = "lightgreen";
                 map[idx] = parNum;
                 insertOrder[idx] = order;
-                queue.give([x, y]);
+                queue.push([x, y]);
                 return true;
             }
 
             if (await insert(start[0], start[1], [0, 0], 0)) {
                 while (queue.size) {
-                    let [x, y] = queue.take();
+                    let [x, y] = queue.pop();
                     // console.log(x, y);
                     if (x === end[0] && y === end[1]) {
                         let path = [end];
