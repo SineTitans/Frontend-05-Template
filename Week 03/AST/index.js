@@ -31,6 +31,67 @@ function* tokenize(source) {
     }
 }
 
+function getNext(tokens) {
+    let next = tokens.next();
+    while (next) {
+        let value = next.value;
+        if (value.type != "Whitespace" && value.type != "LineTerminator") return value;
+        next = tokens.next();
+    }
+}
+
+function deduceExpression(current, tokens) {
+
+}
+
+function Expression(tokens) {
+
+}
+
+function deduceAdditiveExpression(current, tokens) {
+
+}
+
+function AdditiveExpression(tokens) {
+
+}
+
+function deduceMultiplicativeExpression(current, tokens) {
+    const MulNodeType = "MultiplicativeExpression";
+    if (current.type == "Number") {
+        return deduceMultiplicativeExpression({
+            type: MulNodeType,
+            children: [current]
+        }, tokens);
+    }
+    let next = getNext(tokens);
+    if (current.type == MulNodeType && next && next.type == "*") {
+        return deduceMultiplicativeExpression({
+            type: MulNodeType,
+            operator: "*",
+            children: [current, next, getNext(tokens)]
+        }, tokens);
+    }
+    if (current.type == MulNodeType && next && next.type == "/") {
+        return deduceMultiplicativeExpression({
+            type: MulNodeType,
+            operator: "/",
+            children: [current, next, getNext(tokens)]
+        }, tokens);
+    }
+    if (current.type == MulNodeType) {
+        return current;
+    }
+    return deduceMultiplicativeExpression(next, tokens);
+}
+
+function MultiplicativeExpression(tokens) {
+    return deduceMultiplicativeExpression(getNext(tokens), tokens);
+}
+
 module.exports = {
     tokenize,
+    Expression,
+    AdditiveExpression,
+    MultiplicativeExpression,
 };

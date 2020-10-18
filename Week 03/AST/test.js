@@ -1,6 +1,9 @@
 const { describe, it } = require('mocha');
 const { assert } = require('chai');
-const { tokenize } = require('./index');
+const {
+    tokenize,
+    MultiplicativeExpression,
+} = require('./index');
 
 describe("test ast ll(1)", function () {
     it("test tokenize", function () {
@@ -24,5 +27,18 @@ describe("test ast ll(1)", function () {
             { type: "Number", value: "25." },
             { type: "EOF" },
         ]);
+    })
+    it('test multiplication', function () {
+        let tokens = tokenize("10 * 25 / 2");
+        let ast = MultiplicativeExpression(tokens);
+        assert.equal(ast.operator, '/');
+        assert.equal(ast.children[2].value, '2');
+        assert.equal(ast.children[1].value, '/');
+        ast = ast.children[0];
+        assert.equal(ast.operator, '*');
+        assert.equal(ast.children[2].value, '25');
+        assert.equal(ast.children[1].value, '*');
+        ast = ast.children[0];
+        assert.equal(ast.children[0].value, '10');
     })
 })
