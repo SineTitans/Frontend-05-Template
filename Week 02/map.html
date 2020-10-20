@@ -124,7 +124,7 @@
         }
         
         class Heap {
-            static #PushHeapAtPos(data, pos, top, val, comp = (a, b) => a - b) {
+            static _PushHeapAtPos(data, pos, top, val, comp = (a, b) => a - b) {
                 for (let i = (pos - 1) >> 1; top < pos && comp(data[i], val) < 0; i = (pos - 1) >> 1) {
                     data[pos] = data[i];
                     pos = i;
@@ -132,7 +132,7 @@
                 data[pos] = val;
             }
 
-            static #PopHeapAtPos(data, pos, bottom, val, comp = (a, b) => a - b) {
+            static _PopHeapAtPos(data, pos, bottom, val, comp = (a, b) => a - b) {
                 const top = pos;
                 let idx = pos;
                 const Max_Seq_non_Leaf = (bottom - 1) >> 1;
@@ -148,7 +148,7 @@
                     data[pos] = data[bottom - 1];
                     pos = bottom - 1;
                 }
-                Heap.#PushHeapAtPos(data, pos, top, val, comp);
+                Heap._PushHeapAtPos(data, pos, top, val, comp);
             }
 
             static make_heap(data, count, comp = (a, b) => a - b) {
@@ -156,14 +156,14 @@
                 for (let pos = bottom >> 1; 0 < pos;) {
                     --pos;
                     const val = data[pos];
-                    Heap.#PopHeapAtPos(data, pos, bottom, val, comp);
+                    Heap._PopHeapAtPos(data, pos, bottom, val, comp);
                 }
             }
 
             static push_heap(data, count, comp) {
                 if (2 <= count) {
                     const _Val = data[--count];
-                    Heap.#PushHeapAtPos(data, count, 0, _Val, comp);
+                    Heap._PushHeapAtPos(data, count, 0, _Val, comp);
                 }
             }
 
@@ -172,7 +172,7 @@
                     --count;
                     const val = data[count];
                     data[count] = data[0];
-                    Heap.#PopHeapAtPos(data, 0, count, val, comp);
+                    Heap._PopHeapAtPos(data, 0, count, val, comp);
                 }
             }
 
