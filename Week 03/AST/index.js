@@ -51,16 +51,47 @@ function Expression(tokens) {
 
 }
 
-function deduceAdditiveExpression(current, tokens) {
+const AddNodeType = "AdditiveExpression";
+const MulNodeType = "MultiplicativeExpression";
 
+function deduceAdditiveExpression(current, next, tokens) {
+    if (current.type == MulNodeType) {
+        return deduceAdditiveExpression({
+            type: AddNodeType,
+            children: [current]
+        }, next, tokens);
+    }
+    if (current.type == AddNodeType && next && next.type == "+") {
+        let [mulExp, nextToken] = MultiplicativeExpression(tokens);
+        return deduceAdditiveExpression({
+            type: AddNodeType,
+            operator: "+",
+            children: [current, next, mulExp]
+        }, nextToken, tokens);
+    }
+    if (current.type == AddNodeType && next && next.type == "-") {
+        let [mulExp, nextToken] = MultiplicativeExpression(tokens);
+        return deduceAdditiveExpression({
+            type: AddNodeType,
+            operator: "-",
+            children: [current, next, mulExp]
+        }, nextToken, tokens);
+    }
+    if (current.type == AddNodeType) {
+        return [current, next];
+    }
+    let [
+        mulExp, nextToken
+    ] = deduceMultiplicativeExpression(current, next, tokens);
+    return deduceAdditiveExpression(mulExp, nextToken, tokens);
 }
 
 function AdditiveExpression(tokens) {
-
+    return deduceAdditiveExpression(
+        getNext(tokens), getNext(tokens), tokens);
 }
 
 function deduceMultiplicativeExpression(current, next, tokens) {
-    const MulNodeType = "MultiplicativeExpression";
     if (current.type == "Number") {
         return deduceMultiplicativeExpression({
             type: MulNodeType,
@@ -95,7 +126,9 @@ function MultiplicativeExpression(tokens) {
 module.exports = {
     tokenize,
     Expression,
-    AdditiveExpression,
+    AdditiveExpression(tokens) {
+        return AdditiveExpression(tokens)[0];
+    },
     MultiplicativeExpression(tokens) {
         return MultiplicativeExpression(tokens)[0];
     },
