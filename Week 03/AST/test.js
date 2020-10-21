@@ -21,13 +21,6 @@ describe("test ast ll(1)", function () {
             { type: 'EOF' },
         ]);
     })
-    it("test invalid expression", function () {
-        let tokens = [...tokenize("25...14")];
-        assert.deepEqual(tokens, [
-            { type: "Number", value: "25." },
-            { type: "EOF" },
-        ]);
-    })
     it('test multiplication', function () {
         let tokens = tokenize("10 * 25 / 2");
         let ast = MultiplicativeExpression(tokens);
@@ -40,5 +33,12 @@ describe("test ast ll(1)", function () {
         assert.equal(ast.children[1].value, '*');
         ast = ast.children[0];
         assert.equal(ast.children[0].value, '10');
+    })
+    it("test invalid expression", function () {
+        let test_tokens = [...tokenize("*25...14")];
+        assert.equal(test_tokens[2].type, "EOF");
+        let tokens = tokenize("*25...14");
+        let ast = MultiplicativeExpression(tokens);
+        assert.equal(ast.children[0].value, '25.');
     })
 })

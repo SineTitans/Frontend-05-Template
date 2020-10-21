@@ -11,8 +11,11 @@ function* tokenize(source) {
         if (!result)
             break;
 
-        if (lexRegExp.lastIndex - lastIndex > result[0].length)
+        if (lexRegExp.lastIndex - lastIndex > result[0].length) {
+            // 清除正则表达式遗留内部状态，以防后续调用出错
+            lexRegExp.lastIndex = 0;
             break;
+        }
 
         let token = {
             type: null,
