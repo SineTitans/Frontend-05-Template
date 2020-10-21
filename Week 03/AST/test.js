@@ -68,5 +68,7 @@ describe("test ast ll(1)", function () {
         assert.equal(ast.type, "Expression");
         assert.equal(ast.children[1].type, "EOF");
         assert.equal(ast.children[0].operator, "-");
+        let eof = Expression(tokenize(""));
+        assert.equal(eof.type, "EOF");
     })
 })

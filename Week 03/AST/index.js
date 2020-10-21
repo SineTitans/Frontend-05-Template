@@ -38,6 +38,7 @@ function getNext(tokens) {
     let next = tokens.next();
     while (next) {
         let value = next.value;
+        if (!value) break;
         if (value.type != "Whitespace" && value.type != "LineTerminator") return value;
         next = tokens.next();
     }
