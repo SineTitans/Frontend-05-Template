@@ -59,42 +59,44 @@ function AdditiveExpression(tokens) {
 
 }
 
-function deduceMultiplicativeExpression(current, tokens) {
+function deduceMultiplicativeExpression(current, next, tokens) {
     const MulNodeType = "MultiplicativeExpression";
     if (current.type == "Number") {
         return deduceMultiplicativeExpression({
             type: MulNodeType,
             children: [current]
-        }, tokens);
+        }, next, tokens);
     }
-    let next = getNext(tokens);
     if (current.type == MulNodeType && next && next.type == "*") {
         return deduceMultiplicativeExpression({
             type: MulNodeType,
             operator: "*",
             children: [current, next, getNext(tokens)]
-        }, tokens);
+        }, getNext(tokens), tokens);
     }
     if (current.type == MulNodeType && next && next.type == "/") {
         return deduceMultiplicativeExpression({
             type: MulNodeType,
             operator: "/",
             children: [current, next, getNext(tokens)]
-        }, tokens);
+        }, getNext(tokens), tokens);
     }
     if (current.type == MulNodeType) {
-        return current;
+        return [current, next];
     }
-    return deduceMultiplicativeExpression(next, tokens);
+    return deduceMultiplicativeExpression(next, getNext(tokens), tokens);
 }
 
 function MultiplicativeExpression(tokens) {
-    return deduceMultiplicativeExpression(getNext(tokens), tokens);
+    return deduceMultiplicativeExpression(
+        getNext(tokens), getNext(tokens), tokens);
 }
 
 module.exports = {
     tokenize,
     Expression,
     AdditiveExpression,
-    MultiplicativeExpression,
+    MultiplicativeExpression(tokens) {
+        return MultiplicativeExpression(tokens)[0];
+    },
 };
