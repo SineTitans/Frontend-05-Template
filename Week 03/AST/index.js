@@ -43,16 +43,28 @@ function getNext(tokens) {
     }
 }
 
-function deduceExpression(current, tokens) {
+const AddNodeType = "AdditiveExpression";
+const MulNodeType = "MultiplicativeExpression";
 
+function deduceExpression(current, next, tokens) {
+    if (current.type == "EOF") {
+        return [current, next];
+    }
+    if (current.type == AddNodeType && next && next.type == "EOF") {
+        return [{
+            type: "Expression", children: [current, next]
+        }];
+    }
+    let [
+        addExp, nextToken
+    ] = deduceAdditiveExpression(current, next, tokens);
+    return deduceExpression(addExp, nextToken, tokens);
 }
 
 function Expression(tokens) {
-
+    return deduceExpression(
+        getNext(tokens), getNext(tokens), tokens);
 }
-
-const AddNodeType = "AdditiveExpression";
-const MulNodeType = "MultiplicativeExpression";
 
 function deduceAdditiveExpression(current, next, tokens) {
     if (current.type == MulNodeType) {
@@ -125,7 +137,9 @@ function MultiplicativeExpression(tokens) {
 
 module.exports = {
     tokenize,
-    Expression,
+    Expression(tokens) {
+        return Expression(tokens)[0];
+    },
     AdditiveExpression(tokens) {
         return AdditiveExpression(tokens)[0];
     },

@@ -4,6 +4,7 @@ const {
     tokenize,
     MultiplicativeExpression,
     AdditiveExpression,
+    Expression,
 } = require('./index');
 
 describe("test ast ll(1)", function () {
@@ -60,5 +61,12 @@ describe("test ast ll(1)", function () {
         assert.equal(ast.children[1].value, '*');
         ast = ast.children[0];
         assert.equal(ast.children[0].value, '10');
+    })
+    it('test expression ast', function () {
+        let tokens = tokenize("1024 + 10 * 25 - 2");
+        let ast = Expression(tokens);
+        assert.equal(ast.type, "Expression");
+        assert.equal(ast.children[1].type, "EOF");
+        assert.equal(ast.children[0].operator, "-");
     })
 })
