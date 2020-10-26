@@ -62,7 +62,7 @@ describe('game test', function () {
         assert.equal(pattern.willWin(1), null);
         let p;
         assert.notEqual(p = pattern.willWin(2), null);
-        let best = pattern.bestChice(2);
+        let best = pattern.bestChoice(2);
         assert.equal(best.result, PlayerResult.WIN);
         assert.deepEqual(best.point, p);
     })
@@ -70,11 +70,11 @@ describe('game test', function () {
         let pattern = new GamePattern;
         pattern.setColor(1, 0, 2);
         pattern.setColor(1, 1, 1);
-        let result = pattern.bestChice(1);
+        let result = pattern.bestChoice(1);
         assert.equal(result.result, PlayerResult.WIN);
         pattern.setColor(1, 0, 0);
         pattern.setColor(0, 0, 2);
-        result = pattern.bestChice(1);
+        result = pattern.bestChoice(1);
         assert.equal(result.result, PlayerResult.DRAW);
     })
     it('test round of game', function () {
@@ -82,7 +82,7 @@ describe('game test', function () {
         assert.equal(game.color, 1);
         assert.equal(game.move(1, 1), MoveResult.MOVE);
         assert.equal(game.isWillWin(), false);
-        assert.equal(game.move(1, 1), MoveResult.CANTMOVE);
+        assert.equal(game.move(1, 1), MoveResult.CANT_MOVE);
         assert.equal(game.color, 2);
         assert.equal(game.move(0, 0), MoveResult.MOVE);
         assert.equal(game.move(0, 1), MoveResult.MOVE);
@@ -90,11 +90,11 @@ describe('game test', function () {
         assert.equal(game.isWillWin(), true);
         assert.equal(game.color, 1);
         assert.equal(game.move(2, 1), MoveResult.WIN);
-        assert.equal(game.move(0, 2), MoveResult.CANTMOVE);
+        assert.equal(game.move(0, 2), MoveResult.CANT_MOVE);
     })
     it('initial best choice', function () {
         let game = new GameControl;
-        let bestFisrt = game.bestChoice();
-        assert.equal(bestFisrt.result, PlayerResult.DRAW);
+        let bestFirst = game.bestChoice();
+        assert.equal(bestFirst.result, PlayerResult.DRAW);
     })
 })

@@ -97,7 +97,7 @@ export class GamePattern {
         return null;
     }
 
-    bestChice(color) {
+    bestChoice(color) {
         let point;
         if (point = this.willWin(color)) {
             return { point, result: 1 }
@@ -109,7 +109,7 @@ export class GamePattern {
             }
             let tmp = this.clone();
             tmp.setIdColor(i, color);
-            let r = tmp.bestChice(3 - color).result;
+            let r = tmp.bestChoice(3 - color).result;
 
             if (- r > result) {
                 result = -r;
@@ -125,7 +125,7 @@ export class GamePattern {
 }
 
 export const MoveResult = {
-    MOVE: 0, WIN: 1, CANTMOVE: 2
+    MOVE: 0, WIN: 1, CANT_MOVE: 2
 }
 
 export class GameControl {
@@ -137,10 +137,10 @@ export class GameControl {
 
     move(x, y) {
         if (this.haveWin) {
-            return MoveResult.CANTMOVE;
+            return MoveResult.CANT_MOVE;
         }
         if (this.pattern.getColor(x, y)) {
-            return MoveResult.CANTMOVE;
+            return MoveResult.CANT_MOVE;
         }
         this.pattern.setColor(x, y, this.color);
         if (this.pattern.check(this.color)) {
@@ -156,6 +156,6 @@ export class GameControl {
     }
 
     bestChoice() {
-        return this.pattern.bestChice(this.color);
+        return this.pattern.bestChoice(this.color);
     }
 }
