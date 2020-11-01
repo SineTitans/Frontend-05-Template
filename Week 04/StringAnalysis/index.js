@@ -1,5 +1,6 @@
 const { kmp } = require('./src/kmp');
 const { Trie } = require('./src/trie');
+const { wildcardMatch } = require('./src/wildcard');
 
 function randomWord(length) {
     const baseCh = "a".charCodeAt(0);
@@ -23,3 +24,5 @@ console.log(kmp("Hello", "ll"));
 console.log(kmp("abcdabcdabcex", "abcdabce"));
 console.log(kmp("abababc", "abababc"));
 console.log(kmp("aabaaabaaac", "aabaaac"));
+
+console.log(wildcardMatch("abcabcabxaac", "a*b*bx*c"));
