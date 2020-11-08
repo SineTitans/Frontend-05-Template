@@ -5,6 +5,10 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "live-server .",
+    "test": "node index.js"
+  },
+  "dependencies": {
+    "live-server": "^1.2.1"
   }
 }

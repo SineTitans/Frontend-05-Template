@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="module">
+        import { effect, reactive } from "./toy-reactive.js";
+        let po = reactive({ r: 1, g: 1, b: 1 });
+        effect(() => document.getElementById("r").value = po.r);
+        document.getElementById("r")
+            .addEventListener("input", event => po.r = event.target.value);
+
+        effect(() => document.getElementById("g").value = po.g);
+        document.getElementById("g")
+            .addEventListener("input", event => po.g = event.target.value);
+
+        effect(() => document.getElementById("b").value = po.b);
+        document.getElementById("b")
+            .addEventListener("input", event => po.b = event.target.value);
+            
+        effect(() => document.getElementById("color")
+            .style.backgroundColor = `rgb(${po.r}, ${po.g}, ${po.b})`);
+    </script>
+</head>
+
+<body>
+    <input id="r" type="range" min=0 max=255 />
+    <input id="g" type="range" min=0 max=255 />
+    <input id="b" type="range" min=0 max=255 />
+    <div id="color" style="width: 100px; height: 100px;"></div>
+</body>
+
+</html>
