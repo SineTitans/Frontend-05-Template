@@ -4,10 +4,9 @@ let usedReactivities = [];
 
 let reactivities = new Map();
 
-function effect(callback) {
+export function effect(callback) {
     usedReactivities = [];
     callback();
-    console.log(usedReactivities);
 
     for (let reactivity of usedReactivities) {
         if (!callbacks.has(reactivity[0])) {
@@ -22,7 +21,7 @@ function effect(callback) {
     }
 } 
 
-function reactive(object) {
+export function reactive(object) {
     if (reactivities.has(object)) {
         return reactivities.get(object);
     }
@@ -54,14 +53,3 @@ function reactive(object) {
     reactivities.set(object, result);
     return result;
 }
-
-let object = {
-    a: {b: 3}, b: 2
-}
-
-let po = reactive(object);
-effect(() => console.log(po.a.b));
-
-const repl = require("repl");
-let session = repl.start();
-session.context.po = po;
