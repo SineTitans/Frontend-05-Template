@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+    <div id="mountNode"></div>
+    <script src="https://gw.alipayobjects.com/os/lib/antv/g6/3.8.4/dist/g6.min.js"></script>
+    <script>
+        let bodyStyle = document.body.style;
+        let width = document.body.clientWidth;
+        let height = window.innerHeight - bodyStyle.marginTop - bodyStyle.marginBottom;
+
+
+        let root = globalThis || window;
+
+        function ableNode(obj, property) {
+            if (obj instanceof Array) return false;
+            switch (obj) {
+                case root: {
+                    if (property.indexOf("Storage") >= 0) return false;
+                    if (property.indexOf("bar") >= 0) return false;
+                } break;
+            }
+            return true;
+        }
+
+        let visited = new Set;
+        function visitObject(obj, label, id, info, deep = 0) {
+            info.nodes.push({
+                id, label,
+                size: 65,
+                x: 0,
+                y: 0,
+            });
+            visited.add(obj);
+
+            if (deep > 10) return info;
+            for (let key in obj) {
+                let child = obj[key];
+                if (visited.has(child)) continue;
+                if (child && typeof child == "object" && ableNode(obj, key)) {
+                    let childId = `${id}.${key}`;
+                    info.edges.push({ source: id, target: childId })
+                    info = visitObject(child, key, childId, info, deep + 1);
+                }
+            }
+
+            return info;
+        }
+        let data = visitObject(root, "globalThis", "globalThis", {
+            nodes: [],
+            edges: [],
+        });
+        data.nodes[0].x = width / 2;
+        data.nodes[0].y = height / 2;
+
+        const graph = new G6.Graph({
+            container: 'mountNode',
+            width: document.body.clientWidth,
+            height: root.innerHeight - bodyStyle.marginTop - bodyStyle.marginBottom,
+            fitView: true,
+            modes: {
+                default: ['drag-canvas', 'zoom-canvas', 'drag-node'],
+            },
+            layout: {
+                type: 'force',
+                linkDistance: 200,
+                preventOverlap: true,
+                nodeSize: 65
+            },
+        });
+        graph.data(data);
+        graph.render();
+    </script>
+</body>
+
+</html>
