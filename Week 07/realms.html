@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
 </head>
 
 <body>
@@ -12,16 +13,83 @@
         let width = document.body.clientWidth;
         let height = window.innerHeight - bodyStyle.marginTop - bodyStyle.marginBottom;
 
-
         let root = globalThis || window;
+
+        // list from https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects
+        let onJSRealms = new Set([
+            'Infinity',
+            'NaN',
+            'undefined',
+            'eval',
+            'uneval',
+            'isFinite',
+            'isNaN',
+            'parseFloat',
+            'parseInt',
+            'decodeURI',
+            'decodeURIComponent',
+            'encodeURI',
+            'encodeURIComponent',
+            'Object',
+            'Function',
+            'Boolean',
+            'Symbol',
+            'Error',
+            'AggregateError',
+            'EvalError',
+            'InternalError',
+            'RangeError',
+            'Number',
+            'BigInt',
+            'Math',
+            'Date',
+            'String',
+            'RegExp',
+            'Array',
+            'Int8Array',
+            'Uint8Array',
+            'Uint8ClampedArray',
+            'Int16Array',
+            'Uint16Array',
+            'Int32Array',
+            'Uint32Array',
+            'Float32Array',
+            'Float64Array',
+            'BigInt64Array',
+            'BigUint64Array',
+            'Map',
+            'Set',
+            'WeakMap',
+            'WeakSet',
+            'ArrayBuffer',
+            'SharedArrayBuffer',
+            'Atomics',
+            'DataView',
+            'JSON',
+            'Promise',
+            'Generator',
+            'GeneratorFunction',
+            'AsyncFunction',
+            'Reflect',
+            'Proxy',
+            'Intl',
+            'WebAssembly',
+        ]);
+
+        let functionIgnore = new Set([
+            "caller", "callee", "arguments",
+        ]);
 
         function ableNode(obj, property) {
             if (obj instanceof Array) return false;
-            switch (obj) {
-                case root: {
-                    if (property.indexOf("Storage") >= 0) return false;
-                    if (property.indexOf("bar") >= 0) return false;
-                } break;
+
+            if (obj == root) {
+                if (onJSRealms.has(property)) return true;
+                return false;
+            }
+
+            if (typeof obj == "function") {
+                if (functionIgnore.has(property)) return false;
             }
             return true;
         }
@@ -36,14 +104,24 @@
             });
             visited.add(obj);
 
-            if (deep > 10) return info;
-            for (let key in obj) {
-                let child = obj[key];
-                if (visited.has(child)) continue;
-                if (child && typeof child == "object" && ableNode(obj, key)) {
-                    let childId = `${id}.${key}`;
-                    info.edges.push({ source: id, target: childId })
-                    info = visitObject(child, key, childId, info, deep + 1);
+            for (let key of Object.getOwnPropertyNames(obj)) {
+                if (!ableNode(obj, key)) continue;
+                const addChild = (child, key) => {
+                    if (visited.has(child)) return;
+                    if (child && (typeof child == "object" || typeof child == "function")) {
+                        let childId = `${id}.${key}`;
+                        info.edges.push({ source: id, target: childId })
+                        info = visitObject(child, key, childId, info, deep + 1);
+                    }
+                }
+
+                let kInfo = Object.getOwnPropertyDescriptor(obj, key);
+                if (kInfo.value) {
+                    addChild(kInfo.value, key);
+                }
+                else {
+                    addChild(kInfo.get, `get ${key}`);
+                    addChild(kInfo.set, `set ${key}`);
                 }
             }
 
@@ -66,7 +144,7 @@
             },
             layout: {
                 type: 'force',
-                linkDistance: 200,
+                linkDistance: 100,
                 preventOverlap: true,
                 nodeSize: 65
             },
