@@ -117,7 +117,85 @@ for (let [t, a] of testS2N) {
 }
 
 
-function NumberToString(num, radix) {
+function NumberToString(num = 0, radix = 10) {
+    if (Number.isNaN(num)) return "NaN";
+    if (!Number.isFinite(num))
+        return num > 0 ? "Infinity" : "-Infinity";
 
+    let ch_0 = '0'.charCodeAt(0);
+    if (radix < 2 || radix > 36) {
+        throw new RangeError("radix argument must be between 2 and 36");
+    }
+    radix = Math.floor(radix);
+    if (radix != 10) {
+        let ch_a = 'a'.charCodeAt(0);
+        // 非10进制只作为正整数处理，最大36进制
+        if (num < 0 || radix < 2 || radix > 36) return '';
+        num = Math.floor(num);
+        let result = '';
+        while (num) {
+            let pos = num % radix;
+            let ch = pos < 10 ? String.fromCharCode(ch_0 + pos)
+                : String.fromCharCode(ch_a + pos - 10);
+            result = ch + result;
+            num = (num - pos) / radix;
+        }
+        if (radix == 16) return '0x' + result;
+        if (radix == 8) return '0o' + result;
+        if (radix == 2) return '0b' + result;
+        return `${result}(${radix})`;
+    }
+
+    let result = "", exp = 0;
+    if (num < 0) {
+        result = "-";
+        num = - num;
+    }
+
+    if (num >= 1e21) {
+        while (num >= 10) {
+            num /= 10;
+            ++exp;
+        }
+    }
+    else if (num < 1e-7) {
+        while (num < 1) {
+            num *= 10;
+            --exp;
+        }
+    }
+
+    let dot = 0;
+    while (num >= 10) {
+        num /= 10;
+        ++dot;
+    }
+
+    while (num > Number.EPSILON && dot > -16) {
+        let pos = Math.floor(num);
+        result += String.fromCharCode(ch_0 + pos);
+        num -= pos;
+        num *= 10;
+        if (dot == 0 && num > Number.EPSILON) {
+            result += '.';
+        }
+        --dot;
+    }
+
+    if (exp != 0) {
+        result += `e${exp}`;
+    }
+
+    return result;
 }
 
+console.log(NumberToString(27, 2));
+console.log(NumberToString(27, 5));
+console.log(NumberToString(27, 8));
+console.log(NumberToString(27, 16));
+console.log(NumberToString(27, 22));
+console.log(NumberToString(27.5));
+console.log(NumberToString(275));
+console.log(NumberToString(Math.E));
+console.log(NumberToString(1.46e-17));
+console.log(NumberToString(91.46e17));
