@@ -56,5 +56,4 @@ function kmpFindSubString(str = "", sub = "") {
     return matcher.match(str);
 }
 
-
 console.log(`"alphabets abcdefg" has "abcdef"? ${kmpFindSubString("alphabets abcdefg", "abcdef") >= 0}`);
