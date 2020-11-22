@@ -44,3 +44,53 @@ const match_2 = (() => {
 })();
 
 console.log(`"aababaababababaababababababx" has "abababx"? ${match_2("aababaababababaababababababx")}`);
+
+function createKmpMatcher(pattern = "") {
+    let chs = [...pattern];
+    let end = () => end;
+    let states = [
+        ch => ch == chs[0] ? states[1] : states[0]
+    ];
+    let table = Array(chs.length).fill(0);
+    for (let i = 1; i < chs.length; ++i) {
+        states.push(ch => ch == chs[i] ?
+            states[i + i] : states[0](ch));
+    }
+    states.push(end);
+
+    let i = 1, j = 0;
+    while (i < chs.length) {
+        if (chs[i] == chs[j]) {
+            ++i, ++j;
+            if (table[i] != j) {
+                table[i] = j;
+                states[i] = ch => ch == chs[i] ?
+                    states[i + i] : states[j](ch)
+            }
+        }
+        else if (j > 0) {
+            j = table[j];
+        }
+        else {
+            ++i;
+        }
+    }
+    table = null;
+    return [states[0], end];
+}
+
+
+function match(str = "", init, succ) {
+    let state = init;
+    for (let ch of str) {
+        state = state(ch);
+    }
+    return state == succ;
+}
+
+function kmpFindSubString(str = "", sub = "") {
+    let matcher = createKmpMatcher(sub);
+    return match(str, matcher[0], matcher[1]);
+}
+
+console.log(`"alphabets aababaababababaababababababx" has "abababx"? ${kmpFindSubString("alphabets aababaababababaababababababx", "abababx") >= 0}`);
