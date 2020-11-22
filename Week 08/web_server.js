@@ -4,7 +4,7 @@ http.createServer(function (req, resp) {
     let body = [];
 
     req.on('error', err => console.error(err))
-        .on('data', chunk => body.push(chunk.toString()))
+        .on('data', chunk => body.push(chunk))
         .on('end', function () {
             let reqData = Buffer.concat(body).toString();
             console.log("request body:", reqData);

@@ -1,5 +1,16 @@
 const net = require('net');
 
+class ResponseParser {
+    receive(string) {
+        for (let i = 0; i < string.length; ++i) {
+            this.receiveChar(string.chatAt(i));
+        }
+    }
+    receiveChar(char) {
+
+    }
+}
+
 class Request {
     constructor(options) {
         this.method = options.method || "GET";
@@ -21,9 +32,38 @@ class Request {
         this.headers['Content-Length'] = this.bodyText.length;
     }
 
-    send() {
+    toString() {
+        return `${this.method} ${this.path} HTTP/1.1\r
+${Object.keys(this.headers).map(key => `${key}: ${this.headers[key]}`).join('\r\n')}\r
+\r
+${this.bodyText}`;
+    }
+
+    send(connection) {
         return new Promise((resolve, reject) => {
-            // TODO
+            if (connection) {
+                connection.write(this.toString());
+            }
+            else {
+                connection = net.createConnection({
+                    host: this.host,
+                    port: this.port,
+                }, () => connection.write(this.toString()));
+            }
+
+            const parser = new ResponseParser;
+            connection.on('data', data => {
+                console.log(data.toString());
+                parser.receive(data.toString());
+                if (parser.isFinished) {
+                    resolve(parser.response);
+                    connection.end();
+                }
+            });
+            connection.on('error', err => {
+                reject(err);
+                connection.end();
+            });
         });
     }
 }
