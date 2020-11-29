@@ -1,15 +1,87 @@
 const net = require('net');
 
 class ResponseParser {
+    constructor() {
+        this.current = this.WAITING_STATUS_LINE;
+        this.statusLine = "";
+        this.headers = {};
+        this.headerName = "";
+        this.headerValue = "";
+        this.bodyParser = null;
+    }
+
     receive(string) {
         for (let i = 0; i < string.length; ++i) {
-            this.receiveChar(string.chatAt(i));
+            this.receiveChar(string.charAt(i));
         }
     }
     receiveChar(char) {
-
+        switch (this.current) {
+            case this.WAITING_STATUS_LINE: {
+                if (char === '\r') {
+                    this.current = this.WAITING_STATUS_LINE_END;
+                }
+                else {
+                    this.statusLine += char;
+                }
+            } break;
+            case this.WAITING_STATUS_LINE_END: {
+                if (char === '\n') {
+                    this.current = this.WAITING_HEADER_NAME;
+                }
+            } break;
+            case this.WAITING_HEADER_NAME: {
+                if (char === ':') {
+                    this.current = this.WAITING_HEADER_SPACE;
+                }
+                else if (char === '\r') {
+                    this.current = this.WAITING_HEADER_BLOCK_END;
+                }
+                else {
+                    this.headerName += char;
+                }
+            } break;
+            case this.WAITING_HEADER_SPACE: {
+                if (char === ' ') {
+                    this.current = this.WAITING_HEADER_VALUE;
+                }
+            } break;
+            case this.WAITING_HEADER_VALUE: {
+                if (char === '\r') {
+                    this.current = this.WAITING_HEADER_LINE_END;
+                    this.headers[this.headerName] = this.headerValue;
+                    this.headerName = "";
+                    this.headerValue = "";
+                }
+                else {
+                    this.headerValue += char;
+                }
+            } break;
+            case this.WAITING_HEADER_LINE_END: {
+                if (char === '\n') {
+                    this.current = this.WAITING_HEADER_NAME;
+                }
+            } break;
+            case this.WAITING_HEADER_BLOCK_END: {
+                if (char === '\r') {
+                    this.current = this.WAITING_BODY;
+                }
+            } break;
+            case this.WAITING_BODY: {
+                console.log(char);
+            } break;
+        }
     }
 }
+
+ResponseParser.prototype.WAITING_STATUS_LINE = 0;
+ResponseParser.prototype.WAITING_STATUS_LINE_END = 1;
+ResponseParser.prototype.WAITING_HEADER_NAME = 2;
+ResponseParser.prototype.WAITING_HEADER_SPACE= 3;
+ResponseParser.prototype.WAITING_HEADER_VALUE= 4;
+ResponseParser.prototype.WAITING_HEADER_LINE_END = 5;
+ResponseParser.prototype.WAITING_HEADER_BLOCK_END = 6;
+ResponseParser.prototype.WAITING_BODY = 7;
 
 class Request {
     constructor(options) {
