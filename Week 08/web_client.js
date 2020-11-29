@@ -1,5 +1,61 @@
 const net = require('net');
 
+class TrunkedBodyParser {
+    constructor() {
+        this.length = 0;
+        this.content = [];
+        this.isFinished = false;
+        this.current = this.WAITING_LENGTH;
+    }
+
+    receiveChar(char) {
+        switch (this.current) {
+            case this.WAITING_LENGTH: {
+                if (char === '\r') {
+                    if (this.length === 0) {
+                        this.isFinished = true;
+                    }
+                    this.current = this.WAITING_LENGTH_LINE_END;
+                }
+                else {
+                    this.length *= 16;
+                    this.length += Number.parseInt(char, 16);
+                }
+            } break;
+            case this.WAITING_LENGTH_LINE_END: {
+                if (char === '\n') {
+                    this.current = this.READING_TRUNK;
+                }
+            } break;
+            case this.READING_TRUNK: {
+                if (this.length) {
+                    this.content.push(char);
+                    this.length--;
+                }
+                if (this.length === 0) {
+                    this.current = this.WAITING_NEW_LINE;
+                }
+            } break;
+            case this.WAITING_NEW_LINE: {
+                if (char === '\r') {
+                    this.current = this.WAITING_NEW_LINE_END;
+                }
+            } break;
+            case this.WAITING_NEW_LINE_END: {
+                if (char === '\n') {
+                    this.current = this.WAITING_LENGTH;
+                }
+            } break;
+        }
+    }
+}
+
+TrunkedBodyParser.prototype.WAITING_LENGTH = 0;
+TrunkedBodyParser.prototype.WAITING_LENGTH_LINE_END = 1;
+TrunkedBodyParser.prototype.READING_TRUNK = 2;
+TrunkedBodyParser.prototype.WAITING_NEW_LINE = 3;
+TrunkedBodyParser.prototype.WAITING_NEW_LINE_END = 4;
+
 class ResponseParser {
     constructor() {
         this.current = this.WAITING_STATUS_LINE;
@@ -10,9 +66,22 @@ class ResponseParser {
         this.bodyParser = null;
     }
 
+    get isFinished() {
+        return this.bodyParser && this.bodyParser.isFinished;
+    }
+
+    get response() {
+        this.statusLine.match(/HTTP\/1.1 ([0-9]+) ([\s\S]+)/);return {
+            statusCode: RegExp.$1,
+            statusText: RegExp.$2,
+            headers: this.headers,
+            body: this.bodyParser.content.join(''),
+        };
+    }
+
     receive(string) {
-        for (let i = 0; i < string.length; ++i) {
-            this.receiveChar(string.charAt(i));
+        for (let ch of string) {
+            this.receiveChar(ch);
         }
     }
     receiveChar(char) {
@@ -36,6 +105,8 @@ class ResponseParser {
                 }
                 else if (char === '\r') {
                     this.current = this.WAITING_HEADER_BLOCK_END;
+                    if (this.headers['Transfer-Encoding'] === 'chunked')
+                        this.bodyParser = new TrunkedBodyParser();
                 }
                 else {
                     this.headerName += char;
@@ -63,12 +134,12 @@ class ResponseParser {
                 }
             } break;
             case this.WAITING_HEADER_BLOCK_END: {
-                if (char === '\r') {
+                if (char === '\n') {
                     this.current = this.WAITING_BODY;
                 }
             } break;
             case this.WAITING_BODY: {
-                console.log(char);
+                this.bodyParser.receiveChar(char);
             } break;
         }
     }
