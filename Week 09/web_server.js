@@ -18,8 +18,7 @@ http.createServer(function (req, resp) {
                 } break;
                 case '/week-09': {
                     resp.writeHead(200, { 'Content-Type': 'text/html' });
-                    resp.end(`<!DOCTYPE html>
-
+                    resp.end(`
 <html maaa=a>
 
 <head>
