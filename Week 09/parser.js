@@ -13,8 +13,7 @@ function addCSSRules(text) {
 }
 
 function computeCSS(element) {
-    console.log(rules);
-    console.log("compute CSS for Element", element);
+    let elements = stack.slice().reverse();
 }
 
 function emit(token) {
@@ -31,8 +30,9 @@ function emit(token) {
         delete token.type;
         delete token.tagName;
 
+        let needPush = false;
         if (!token.isSelfClosing) {
-            stack.push(element);
+            needPush = true;
         }
         else {
             delete token.isSelfClosing;
@@ -48,6 +48,8 @@ function emit(token) {
 
         top.children.push(element);
         element.parent = top;
+        
+        if (needPush) stack.push(element);
 
         currentTextNode = null;
     }
