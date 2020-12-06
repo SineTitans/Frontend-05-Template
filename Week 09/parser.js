@@ -2,9 +2,7 @@ let currentToken = null;
 let currentAttribute = null;
 let currentTextNode = null;
 
-let stack = [
-    { type: 'document', children: [] },
-];
+let stack = [];
 
 function emit(token) {
     let top = stack[stack.length - 1];
@@ -292,6 +290,10 @@ function selfClosingStartTag(c) {
 }
 
 function parseHTML(html) {
+    stack = [
+        { type: 'document', children: [] },
+    ];
+
     let state = data;
     for (let c of html) {
         state = state(c);
