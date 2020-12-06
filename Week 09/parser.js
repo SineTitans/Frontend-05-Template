@@ -2,9 +2,56 @@ const EOF = Symbol("end of file");
 
 let currentToken = null;
 let currentAttribute = null;
+let currentTextNode = null;
+
+let stack = [
+    { type: 'document', children: [] },
+];
 
 function emit(token) {
-    console.log(token);
+    if (token.type == 'text')
+        return;
+    let top = stack[stack.length - 1];
+
+    if (token.type == 'startTag') {
+        let element = {
+            type: "element",
+            children: [],
+            attributes: [],
+        };
+
+        element.tagName = token.tagName;
+        delete token.type;
+        delete token.tagName;
+
+        if (!token.isSelfClosing) {
+            stack.push(element);
+        }
+        else {
+            delete token.isSelfClosing;
+        }
+
+        for (let p in token) {
+            element.attributes.push({
+                name: p, value: token[p],
+            });
+        }
+
+        top.children.push(element);
+        element.parent = top;
+
+        currentTextNode = null;
+    }
+    else if (token.type == 'endTag') {
+        if (top.tagName != token.tagName) {
+            throw new Error("Tag start end doesn't match!");
+        }
+        else {
+            stack.pop();
+        }
+
+        currentTextNode = null;
+    }
 }
 
 function data(c) {
@@ -55,10 +102,14 @@ function endTagOpen(c) {
 
 function tagName(c) {
     if (c.match(/^[\t\n\f ]$/)) {
+        if (currentToken.tagName == "meta") {
+            currentToken.type = "meta";
+            delete currentToken.tagName;
+        }
         return beforeAttributeName;
     }
     if (c == '/') {
-        currentToken.selfClosingStartTag = true;
+        currentToken.isSelfClosing = true;
         return selfClosingStartTag;
     }
     if (c.match(/^[a-zA-Z]$/)) {
@@ -158,7 +209,7 @@ function UnquotedAttributeValue(c) {
     }
     if (c == '/') {
         currentToken[currentAttribute.name] = currentAttribute.value;
-        currentToken.selfClosingStartTag = true;
+        currentToken.isSelfClosing = true;
         return selfClosingStartTag;
     }
     if (c == '>') {
@@ -184,7 +235,7 @@ function afterQuotedAttributeValue(c) {
         return beforeAttributeName;
     }
     if (c == '/') {
-        currentToken.selfClosingStartTag = true;
+        currentToken.isSelfClosing = true;
         return selfClosingStartTag;
     }
     if (c == '>') {
@@ -202,7 +253,7 @@ function afterAttributeName(c) {
         return afterAttributeName;
     }
     if (c == '/') {
-        currentToken.selfClosingStartTag = true;
+        currentToken.isSelfClosing = true;
         return selfClosingStartTag;
     }
     if (c == '=') {
@@ -238,6 +289,8 @@ function parseHTML(html) {
         state = state(c);
     }
     state = state(EOF);
+    let dom = stack[0];
+    debugger;
 }
 
 module.exports = {
