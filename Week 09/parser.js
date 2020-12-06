@@ -33,6 +33,24 @@ function match(element, selector) {
     return false;
 }
 
+function specificity(selector) {
+    let result = { inline: 0, id: 0, class: 0, tag: 0 };
+    for (let part of selector.split(' ')) {
+        let lead = part.charAt(0);
+        if (lead == '#') ++result.id;
+        else if (lead == '.') ++result.class;
+        else ++result.tag;
+    }
+    return result;
+}
+
+function compare(sp1, sp2) {
+    return sp1.inline != sp2.inline ? sp1.inline - sp2.inline :
+        sp1.id != sp2.id ? sp1.id - sp2.id :
+            sp1.class != sp2.class ? sp1.class - sp2.class :
+                sp1.tag - sp2.tag;
+}
+
 function computeCSS(element) {
     let elements = stack.slice().reverse();
     if (!element.computedStyle) {
@@ -57,12 +75,22 @@ function computeCSS(element) {
             matched = true;
 
         if (matched) {
+            let sp = specificity(rule.selectors[0])
             let computedStyle = element.computedStyle;
             for (let declaration of rule.declarations) {
                 if (!computedStyle[declaration.property])
                     computedStyle[declaration.property] = {};
 
-                computedStyle[declaration.property].value = declaration.value;
+                let property = computedStyle[declaration.property];
+                if (!property.specificity) {
+                    property.value = declaration.value;
+                    property.specificity = sp;
+                }
+                else if (compare(property.specificity, sp) < 0) {
+                    property.value = declaration.value;
+                    property.specificity = sp;
+                }
+
             }
             console.log(JSON.stringify(element.computedStyle));
         }
