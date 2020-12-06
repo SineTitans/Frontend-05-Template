@@ -57,7 +57,14 @@ function computeCSS(element) {
             matched = true;
 
         if (matched) {
-            console.log("Element", element, "matched rule", rule);
+            let computedStyle = element.computedStyle;
+            for (let declaration of rule.declarations) {
+                if (!computedStyle[declaration.property])
+                    computedStyle[declaration.property] = {};
+
+                computedStyle[declaration.property].value = declaration.value;
+            }
+            console.log(JSON.stringify(element.computedStyle));
         }
     }
 }
