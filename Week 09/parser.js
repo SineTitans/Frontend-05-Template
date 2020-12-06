@@ -23,7 +23,8 @@ function match(element, selector) {
     }
     else if (selector.charAt(0) == '.') {
         let attr = element.attributes.filter(attr => attr.name === "class")[0];
-        if (attr && attr.value === selector.replace(".", ''))
+        let aimCls = selector.replace(".", '');
+        if (attr && attr.value.split(' ').some(cls => cls === aimCls))
             return true;
     }
     else if (element.tagName === selector) {
