@@ -1,8 +1,17 @@
+const css = require('css');
+
 let currentToken = null;
 let currentAttribute = null;
 let currentTextNode = null;
 
 let stack = [];
+let rules = [];
+
+function addCSSRules(text) {
+    let ast = css.parse(text);
+    console.log(ast, null, "    ");
+    rules.push(...ast.stylesheet.rules);
+}
 
 function emit(token) {
     let top = stack[stack.length - 1];
@@ -41,6 +50,9 @@ function emit(token) {
             throw new Error("Tag start end doesn't match!");
         }
         else {
+            if (top.tagName == "style") {
+                addCSSRules(top.children[0].content);
+            }
             stack.pop();
         }
 
