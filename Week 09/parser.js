@@ -1,5 +1,3 @@
-const EOF = Symbol("end of file");
-
 let currentToken = null;
 let currentAttribute = null;
 let currentTextNode = null;
@@ -9,8 +7,6 @@ let stack = [
 ];
 
 function emit(token) {
-    if (token.type == 'text')
-        return;
     let top = stack[stack.length - 1];
 
     if (token.type == 'startTag') {
@@ -52,7 +48,19 @@ function emit(token) {
 
         currentTextNode = null;
     }
+    else if (token.type == "text") {
+        if (currentTextNode == null) {
+            currentTextNode = {
+                type: "text",
+                content: "",
+            };
+            top.children.push(currentTextNode);
+        }
+        currentTextNode.content += token.content;
+    }
 }
+
+const EOF = Symbol("end of file");
 
 function data(c) {
     if (c == '<') {
@@ -291,6 +299,7 @@ function parseHTML(html) {
     state = state(EOF);
     let dom = stack[0];
     debugger;
+    return dom;
 }
 
 module.exports = {
