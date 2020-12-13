@@ -1,6 +1,5 @@
 const { Request } = require('../Week 08/http_request');
-const { parseHTML } = require('../Week 09/parser');
-const { layout } = require('./layout');
+const { parseHTML } = require('./parser');
 
 void async function () {
     let request = new Request({
@@ -18,5 +17,5 @@ void async function () {
 
     let resp = await request.send();
 
-    let dom = parseHTML(resp.body, layout);
+    let dom = parseHTML(resp.body);
 }();

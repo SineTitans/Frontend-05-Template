@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "main": "web_client.js",
   "license": "MIT",
+  "dependencies": {
+    "css": "^3.0.0"
+  },
   "scripts": {
+    "serve": "node ./web_server.js",
     "start": "node ./web_client.js"
   }
 }

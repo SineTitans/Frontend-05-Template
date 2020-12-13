@@ -110,6 +110,66 @@ function layout(element) {
         crossBase = 0;
         crossSign = 1;
     }
+
+    let isAutoMainSize = false;
+    if (!style[mainSize]) {
+        elementStyle[mainSize] = 0;
+        for (let i = 0; i < items.length; ++i) {
+            let item = items[i];
+            let itemStyle = getStyle(item);
+            if (itemStyle[mainSize] !== null || itemStyle !== void 0) {
+                elementStyle[mainSize] += itemStyle[mainSize];
+            }
+        }
+        isAutoMainSize = true;
+    }
+
+    let flexLine = [];
+    let flexLines = [flexLine];
+
+    let mainSpace = elementStyle[mainSize];
+    let crossSpace = 0;
+
+    for (let i = 0; i < items.length; ++i) {
+        let item = items[i];
+        let itemStyle = getStyle(item);
+
+        if (itemStyle[mainSize] === null || itemStyle === void 0) {
+            itemStyle[mainSize] = 0;
+        }
+
+        if (itemStyle.flex) {
+            flexLine.push(item);
+        }
+        else if (style.flexWrap === 'nowrap' && isAutoMainSize) {
+            mainSpace -= itemStyle[mainSize];
+            if (itemStyle[crossSize] !== null && itemStyle[crossSize] !== void 0)
+                crossSpace = Math.max(crossSpace, itemStyle[crossSize]);
+            flexLine.push(item);
+        }
+        else {
+            if (itemStyle[mainSize] > style[mainSize]) {
+                itemStyle[mainSize] = style[mainSize];
+            }
+            if (mainSpace < itemStyle[mainSize]) {
+                flexLine.mainSpace = mainSpace;
+                flexLine.crossSpace = crossSpace;
+                flexLine = [item];
+                flexLines.push(flexLine);
+                mainSpace = style[mainSize];
+                crossSpace = 0;
+            }
+            else {
+                flexLine.push(item);
+            }
+            if (itemStyle[crossSize] !== null && itemStyle[crossSize] !== void 0)
+                crossSpace = Math.max(crossSpace, itemStyle[crossSize]);
+            mainSpace -= itemStyle[mainSize];
+        }
+    }
+    flexLine.mainSpace = mainSpace;
+
+    console.log(items, flexLines);
 }
 
 module.exports = {
