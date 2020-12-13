@@ -9,4 +9,4 @@
 * 行高取决于一行中最高的元素的高度。
 * 根据flex-align或元素自身的item-align决定单个DOM元素的位置，item-align会覆盖flex-align。
 * 绘制图像的时候，需要准备一块画布用作viewport。
-* 递归访问DOM树每个节点，调用render将元素的渲染数据呈现在viewport上（游戏引擎的渲染工作流远离也类似）
+* 递归访问DOM树每个节点，调用render将元素的渲染数据呈现在viewport上（游戏引擎的渲染工作流原理也类似）。
