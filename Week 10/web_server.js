@@ -47,6 +47,33 @@ http.createServer(function (req, resp) {
 </html>
 `);
                 } break;
+                case '/week-10': {
+                    resp.writeHead(200, { 'Content-Type': 'text/html' });
+                    resp.end(`
+<style>
+    div {
+        border:solid 1px black;
+    }
+    #par {
+        align-items:center;display:flex;width:500px;justify-content:space-around;
+    }
+    #c1 {
+        flex:1;width:100px;height:70px;
+    }
+    #c2 {
+        width:200px;height:50px;
+    }
+    #c3 {
+        width:200px;height:100px;
+    }
+</style>
+<div id="par">
+    <div id="c1"></div>
+    <div id="c2"></div>
+    <div id="c3"></div>
+</div>
+`);
+                } break;
                 default: {
                     resp.writeHead(404, { 'Content-Type': 'text/html' });
                     resp.end();
