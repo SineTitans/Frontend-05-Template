@@ -4,7 +4,8 @@
   "main": "web_client.js",
   "license": "MIT",
   "dependencies": {
-    "css": "^3.0.0"
+    "css": "^3.0.0",
+    "images": "^3.2.3"
   },
   "scripts": {
     "serve": "node ./web_server.js",

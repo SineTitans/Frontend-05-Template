@@ -51,20 +51,28 @@ http.createServer(function (req, resp) {
                     resp.writeHead(200, { 'Content-Type': 'text/html' });
                     resp.end(`
 <style>
-    div {
-        border:solid 1px black;
-    }
     #par {
-        align-items:center;display:flex;width:500px;justify-content:space-around;
+        align-items: center;
+        display: flex;
+        width: 500px;
+        justify-content: space-around;
+        background-color: rgb(255,255,255);
     }
     #c1 {
-        flex:1;width:100px;height:70px;
+        flex: 1;
+        width: 100px;
+        height: 70px;
+        background-color: rgb(255,0,0);
     }
     #c2 {
-        width:200px;height:50px;
+        width: 200px;
+        height: 50px;
+        background-color: rgb(0,255,0);
     }
     #c3 {
-        width:200px;height:100px;
+        width:200px;
+        height:100px;
+        background-color: rgb(0,0,255);
     }
 </style>
 <div id="par">
