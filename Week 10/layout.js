@@ -196,8 +196,8 @@ function layout(element) {
         }
     }
     else {
-        flexLines.forEach(function (item) {
-            let mainSpace = item.mainSpace;
+        flexLines.forEach(function (items) {
+            let mainSpace = items.mainSpace;
             let flexTotal = 0;
 
             for (let i = 0; i < items.length; ++i) {
@@ -220,7 +220,7 @@ function layout(element) {
                     }
 
                     itemStyle[mainStart] = currentMain;
-                    itemStyle[mainEnd] = itemStyle[mainStart] * mainSign * itemStyle[mainSize];
+                    itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle[mainSize];
                     currentMain = itemStyle[mainEnd];
                 }
             }
