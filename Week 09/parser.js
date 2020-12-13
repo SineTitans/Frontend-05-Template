@@ -92,10 +92,12 @@ function computeCSS(element) {
                 }
 
             }
-            console.log(JSON.stringify(element.computedStyle));
+            // console.log(JSON.stringify(element.computedStyle));
         }
     }
 }
+
+let layout = _ele => {};
 
 function emit(token) {
     let top = stack[stack.length - 1];
@@ -142,6 +144,7 @@ function emit(token) {
             if (top.tagName == "style") {
                 addCSSRules(top.children[0].content);
             }
+            layout(top);
             stack.pop();
         }
 
@@ -390,10 +393,12 @@ function selfClosingStartTag(c) {
     return;
 }
 
-function parseHTML(html) {
+function parseHTML(html, callLayout = _e => {}) {
     stack = [
         { type: 'document', children: [] },
     ];
+
+    layout = callLayout;
 
     let state = data;
     for (let c of html) {
@@ -401,7 +406,6 @@ function parseHTML(html) {
     }
     state = state(EOF);
     let dom = stack[0];
-    debugger;
     return dom;
 }
 
