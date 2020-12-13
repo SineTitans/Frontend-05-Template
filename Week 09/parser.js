@@ -92,7 +92,6 @@ function computeCSS(element) {
                 }
 
             }
-            // console.log(JSON.stringify(element.computedStyle));
         }
     }
 }
