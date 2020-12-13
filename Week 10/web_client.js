@@ -18,4 +18,6 @@ void async function () {
     let resp = await request.send();
 
     let dom = parseHTML(resp.body);
+
+    console.log(JSON.stringify(dom, null, "  "));
 }();

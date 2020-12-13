@@ -281,7 +281,6 @@ function layout(element) {
     else {
         crossBase = 0;
     }
-    let lineSize = style[crossSize] / flexLines.length;
 
     let step;
     if (style.alignContent === 'flex-start') {
@@ -342,8 +341,6 @@ function layout(element) {
         }
         crossBase += crossSign * (lineCrossSize + step);
     });
-
-    console.log(items);
 }
 
 module.exports = {
