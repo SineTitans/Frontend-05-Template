@@ -46,8 +46,8 @@
     1. :nth-child() :nth-last-child()
     1. :first-child :last-child :only-child
   * 逻辑型：
-    1. :not()
-    1. :where :has
+    1. :not() 不支持在表达式中写复杂选择器
+    1. :where :has （css level 4）
   * 出于性能问题，不要在复杂伪类中写太复杂的表达式
 
 * 伪元素：
