@@ -1,0 +1,155 @@
+<script>
+    let names = Object.getOwnPropertyNames(window);
+    // WebKit private APIs
+    names = names.filter(api => !api.toLowerCase().match(/^webkit/))
+
+    // https://tc39.es/ecma262/#sec-global-object
+    {
+        let jsAPI = new Set(["globalThis", "Infinity", "NaN", "undefined", "eval", "isFinite", "isNaN", "parseFloat", "parseInt", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", "Array", "ArrayBuffer", "BigInt", "BigInt64Array", "BigUint64Array", "Boolean", "DataView", "Date", "Error", "EvalError", "FinalizationRegistry", "Float32Array", "Float64Array", "Function", "Int8Array", "Int16Array", "Int32Array", "Map", "Number", "Object", "Promise", "Proxy", "RangeError", "ReferenceError", "RegExp", "Set", "SharedArrayBuffer", "String", "Symbol", "SyntaxError", "TypeError", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "URIError", "WeakMap", "WeakRef", "WeakSet", "Atomics", "JSON", "Math", "Reflect"]);
+        names = names.filter(api => !jsAPI.has(api));
+    }
+    // https://console.spec.whatwg.org/
+    // https://tc39.es/ecma402/#intl-object
+    {
+        let consoleAPI = new Set(["console", "Intl"]);
+        names = names.filter(api => !consoleAPI.has(api));
+    }
+    // https://www.ecma-international.org/ecma-262/6.0/#sec-escape-string
+    {
+        let deprecated = new Set(["escape", "unescape"]);
+        names = names.filter(api => !deprecated.has(api));
+    }
+    // dom nodes events
+    {
+        // nodes
+        names = names.filter(function (api) {
+            try {
+                return !(window[api].prototype instanceof Node);
+            }
+            catch (e) {
+                return true;
+            }
+        }).filter(api => api != "Node");
+        // events
+        names = names.filter(api => !api.match(/^on/));
+        // other dom api
+        let otherDom = new Set(["EventTarget", "TreeWalker"]);
+        names = names.filter(api => !otherDom.has(api));
+    }
+    // https://www.w3.org/TR/DOM-Level-3-XPath/xpath.html
+    names = names.filter(api => !api.match(/^XPath/));
+    // https://w3c.github.io/DOM-Parsing/
+    names = names.filter(api => api != "XMLSerializer");
+    // https://html.spec.whatwg.org/multipage/#dom-parsing-and-serialization
+    names = names.filter(api => api != "DOMParser");
+    // https://xhr.spec.whatwg.org/
+    {
+        let xhr = new Set(["XMLHttpRequestEventTarget", "XMLHttpRequestUpload", "XMLHttpRequest", "FormData", "ProgressEvent"]);
+        names = names.filter(api => !xhr.has(api));
+    }
+    // https://streams.spec.whatwg.org/
+    {
+        let streams = new Set(["ReadableStream", "ReadableStreamDefaultReader", "ReadableStreamBYOBReader", "WritableStream", "WritableStreamDefaultWriter", "TransformStream", "ByteLengthQueuingStrategy", "CountQueuingStrategy"]);
+        names = names.filter(api => !streams.has(api));
+    }
+    // https://html.spec.whatwg.org/multipage/#worker
+    names = names.filter(api => !api.match(/Worker/));
+    // https://html.spec.whatwg.org/multipage/window-object.html
+    {
+        let theWindow = new Set(["Window", "window", "self", "document", "name", "Location", "location", "History", "history", "CustomElementRegistry", "customElements", "BarProp", "locationbar", "menubar", "personalbar", "scrollbars", "statusbar", "toolbar", "status", "close", "closed", "stop", "focus", "blur", "frames", "length", "top", "opener", "parent", "frameElement", "open", "Navigator", "navigator", "originAgentCluster", "alert", "confirm", "prompt","print", "postMessage"]);
+        names = names.filter(api => !theWindow.has(api));
+    }
+    // https://w3c.github.io/uievents/
+    {
+        names = names.filter(function (api) {
+            try {
+                return !(window[api].prototype instanceof UIEvent);
+            }
+            catch (e) {
+                return true;
+            }
+        }).filter(api => api != "UIEvent");
+    }
+    // https://html.spec.whatwg.org/multipage/web-sockets.html
+    names = names.filter(api => api != "WebSocket");
+    // https://www.khronos.org/registry/webgl/specs/latest/2.0/
+    names = names.filter(api => !api.match(/^WebGL/));
+    // https://webaudio.github.io/web-audio-api/#waveshapernode
+    {
+        names = names.filter(api => !api.match(/^Audio/));
+        names = names.filter(api => !api.match(/Wave/));
+    }
+    // https://url.spec.whatwg.org/
+    names = names.filter(api => !api.match(/^URL/));
+    // https://wicg.github.io/visual-viewport/
+    {
+        let vvp = new Set(["VisualViewport", "visualViewport"]);
+        names = names.filter(api => !vvp.has(api));
+    }
+    // https://html.spec.whatwg.org/multipage/form-control-infrastructure.htm
+    {
+        let formCtrl = new Set(["ValidityState", "SubmitEvent", "FormDataEvent"]);
+        names = names.filter(api => !formCtrl.has(api));
+    }
+    // https://w3c.github.io/webvtt/
+    {
+        names = names.filter(api => !api.match(/^VTT/));
+        names = names.filter(api => !api.match(/^TextTrack/));
+        names = names.filter(api => api != "TrackEvent");
+    }
+    // https://drafts.csswg.org/css-transitions/
+    names = names.filter(api => api != "TransitionEvent");
+    // https://www.w3.org/TR/touch-events/
+    names = names.filter(api => !api.match(/^Touch/));
+    // https://html.spec.whatwg.org/multipage/media.html
+    {
+        let media = new Set(["MediaError", "TimeRanges"]);
+        names = names.filter(api => !media.has(api));
+    }
+    // https://html.spec.whatwg.org/multipage/canvas.html
+    {
+        let canvas = new Set(["CanvasRenderingContext2D", "CanvasGradient", "CanvasPattern", "TextMetrics", "ImageData", "Path2D", "ImageBitmapRenderingContext", "OffscreenCanvas", "OffscreenCanvasRenderingContext2D"]);
+        names = names.filter(api => !canvas.has(api));
+    }
+    // https://encoding.spec.whatwg.org/
+    {
+        let encoding = new Set(["TextDecoder", "TextDecoderStream", "TextEncoder", "TextEncoderStream"]);
+        names = names.filter(api => !encoding.has(api));
+    }
+    // https://w3c.github.io/longtasks/
+    {
+        let longtasks = new Set(["PerformanceLongTaskTiming", "TaskAttributionTiming"]);
+        names = names.filter(api => !longtasks.has(api));
+    }
+    // https://wicg.github.io/background-sync/spec/
+    {
+        let bgSync = new Set(["ServiceWorkerRegistration", "SyncManager", "SyncEvent"]);
+        names = names.filter(api => !bgSync.has(api));
+    }
+    // https://drafts.csswg.org/cssom/
+    {
+        let cssom = new Set(["MediaList", "StyleSheet", "StyleSheetList", "CSSRuleList", "CSSRule", "CSSStyleDeclaration", "getComputedStyle", "CSS"]);
+        names = names.filter(function (api) {
+            try {
+                if (cssom.has(api)) return false;
+                for (let base of cssom) {
+                    if (window[api].prototype && window[api].prototype instanceof window[base]) {
+                        return false;
+                    }
+                }
+            }
+            catch (e) { }
+            return true;
+        })
+    }
+    // https://www.w3.org/TR/SVG11/
+    names = names.filter(api => !api.match(/^SVG/));
+    
+    // unknown
+    {
+        let unknowns = new Set(["UserActivation"]);
+        names = names.filter(api => !unknowns.has(api));
+    }
+    
+    console.assert(names.length == 0, "have unidentified identifier(s)", names);
+</script>
