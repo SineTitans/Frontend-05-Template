@@ -31,9 +31,14 @@
 
         // WebKit private APIs
         names = filterByRegExp(names, /^webkit/i);
+        // Edge/IE private APIs
+        names = filterBySet(names, ["defaultStatus", "clientInformation", "screenLeft", "screenTop", "offscreenBuffering"]);
 
         // deprecated https://html.spec.whatwg.org/multipage/obsolete.html
-        names = filterBySet(names, ["HTMLMarqueeElement", "HTMLFrameSetElement", "HTMLFrameElement", "HTMLDirectoryElement", "HTMLFontElement", "HTMLAllCollection", "captureEvents", "releaseEvents", "External", "external"]);
+        names = filterBySet(names, ["HTMLMarqueeElement", "HTMLFrameSetElement", "HTMLFrameElement", "HTMLDirectoryElement", "HTMLFontElement", "captureEvents", "releaseEvents", "External", "external", "DOMError"]);
+
+        // other deprecated APIs
+        names = filterBySet(names, ["DOMError", "defaultstatus"]);
 
         // https://tc39.es/ecma262/
         names = filterBySet(names, ["globalThis", "Infinity", "NaN", "undefined", "eval", "isFinite", "isNaN", "parseFloat", "parseInt", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", "Array", "ArrayBuffer", "BigInt", "BigInt64Array", "BigUint64Array", "Boolean", "DataView", "Date", "Error", "EvalError", "FinalizationRegistry", "Float32Array", "Float64Array", "Function", "Int8Array", "Int16Array", "Int32Array", "Map", "Number", "Object", "Promise", "Proxy", "RangeError", "ReferenceError", "RegExp", "Set", "SharedArrayBuffer", "String", "Symbol", "SyntaxError", "TypeError", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "URIError", "WeakMap", "WeakRef", "WeakSet", "Atomics", "JSON", "Math", "Reflect"]);
@@ -72,7 +77,7 @@
         // https://www.khronos.org/registry/webgl/specs/latest/2.0/
         names = filterByRegExp(names, /^WebGL/);
         // https://webaudio.github.io/web-audio-api/
-        names = filterBySetFromBase(names, ["BaseAudioContext", "AudioBuffer", "AudioNode", " AudioParam", "AudioListener", "PeriodicWave", "AudioWorklet", "AudioParamMap"]);
+        names = filterBySetFromBase(names, ["BaseAudioContext", "AudioBuffer", "AudioNode", "AudioParam", "AudioListener", "PeriodicWave", "AudioWorklet", "AudioParamMap"]);
         // https://url.spec.whatwg.org/
         names = filterByRegExp(names, /^URL/);
         // https://wicg.github.io/visual-viewport/
@@ -143,9 +148,40 @@
         names = filterBySet(names, ["requestIdleCallback", "cancelIdleCallback", "IdleDeadline"]);
         // https://www.w3.org/TR/IndexedDB/
         names = filterByRegExp(names, /^IDB|indexedDB/);
-
-        // unknown
+        // https://w3c.github.io/geolocation-api/
+        names = filterByRegExp(names, /^Geo/);
+        // https://w3c.github.io/gamepad/extensions.html
+        names = filterByRegExp(names, /^Gamepad/);
+        // https://drafts.csswg.org/css-font-loading/
+        names = filterByRegExp(names, /^FontFace/);
+        // https://w3c.github.io/FileAPI/
+        names = filterBySetFromBase(names, ["Blob", "FileList", "FileReader"]);
+        // https://w3c.github.io/webappsec-permissions-policy/
+        names = filterBySet(names, ["PermissionsPolicy", "PermissionsPolicyViolationReportBody", "FeaturePolicy"]);
+        // https://html.spec.whatwg.org/multipage/server-sent-events.html
+        names = filterBySet(names, ["EventSource"]);
+        // https://html.spec.whatwg.org/multipage/custom-elements.html
+        names = filterBySet(names, ["CustomElementRegistry", "ElementInternals"]);
+        // https://wicg.github.io/compression/
+        names = filterBySet(names, ["CompressionStream", "DecompressionStream"]);
+        // https://github.com/dtapuska/useractivation/blob/master/README.md
         names = filterBySet(names, ["UserActivation"]);
+        // https://html.spec.whatwg.org/multipage/dnd.html
+        names = filterBySet(names, ["DataTransfer", "DataTransferItem", "DataTransferItemList"]);
+        // https://html.spec.whatwg.org/multipage/dom.html
+        names = filterBySet(names, ["DOMStringMap"]);
+        // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html
+        names = filterBySet(names, ["HTMLAllCollection", "DOMStringList"]);
+        // https://drafts.fxtf.org/geometry/
+        names = filterBySetFromBase(names, ["DOMPointReadOnly", "DOMRectReadOnly", "DOMRectList", "DOMQuad", "DOMMatrixReadOnly"]);
+        // https://heycam.github.io/webidl/
+        names = filterBySetFromBase(names, ["DOMException"]);
+        // https://heycam.github.io/webidl/
+        names = filterBySetFromBase(names, ["crypto", "Crypto", "CryptoKey", "SubtleCrypto"]);
+        // https://w3c.github.io/clipboard-apis/
+        names = filterBySetFromBase(names, ["Clipboard", "ClipboardItem"]);
+        // https://w3c.github.io/battery/
+        names = filterBySetFromBase(names, ["BatteryManager"]);
 
         console.assert(names.length == 0, "have unidentified identifier(s)", names);
     }();
