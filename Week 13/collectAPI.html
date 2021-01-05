@@ -31,8 +31,8 @@
 
         // WebKit private APIs
         names = filterByRegExp(names, /^webkit/i);
-        // Edge/IE private APIs
-        names = filterBySet(names, ["defaultStatus", "clientInformation", "screenLeft", "screenTop", "offscreenBuffering"]);
+        // browser private APIs
+        names = filterBySet(names, ["defaultStatus", "clientInformation", "screenLeft", "screenTop", "offscreenBuffering", "styleMedia"]);
 
         // deprecated https://html.spec.whatwg.org/multipage/obsolete.html
         names = filterBySet(names, ["HTMLMarqueeElement", "HTMLFrameSetElement", "HTMLFrameElement", "HTMLDirectoryElement", "HTMLFontElement", "captureEvents", "releaseEvents", "External", "external", "DOMError"]);
