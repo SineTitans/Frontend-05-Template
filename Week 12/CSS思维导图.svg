@@ -8457,7 +8457,7 @@
 			<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197" v:verticalAlign="2"/>
 			<v:textRect cx="45" cy="12861.5" width="90" height="36"/>
 			<path d="M0 12881.34 L90 12881.34" class="st3"/>
-			<text x="17.5" y="12876.54" class="st4" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>place-items</text>		</g>
+			<text x="17.5" y="12876.54" class="st4" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>justify-items</text>		</g>
 		<g id="shape517-2237" v:mID="517" v:groupContext="shape" v:layerMember="0" transform="translate(1825.33,-10481.7)">
 			<title>动态连接线.517</title>
 			<v:userDefs>
