@@ -18,6 +18,9 @@
                     if (ignoreSet.has(api)) return false;
                     for (let base of ignoreSet) {
                         if (window[api] && window[base] instanceof Function) {
+                            if (window[api] instanceof window[base]) {
+                                return false;
+                            }
                             if (window[api].prototype && window[api].prototype instanceof window[base]) {
                                 return false;
                             }
@@ -32,7 +35,7 @@
         // WebKit private APIs
         names = filterByRegExp(names, /^webkit/i);
         // browser private APIs
-        names = filterBySet(names, ["defaultStatus", "clientInformation", "screenLeft", "screenTop", "offscreenBuffering", "styleMedia"]);
+        names = filterBySet(names, ["defaultStatus", "clientInformation", "screenLeft", "screenTop", "offscreenBuffering", "styleMedia", "find", "chrome"]);
 
         // deprecated https://html.spec.whatwg.org/multipage/obsolete.html
         names = filterBySet(names, ["HTMLMarqueeElement", "HTMLFrameSetElement", "HTMLFrameElement", "HTMLDirectoryElement", "HTMLFontElement", "captureEvents", "releaseEvents", "External", "external", "DOMError"]);
@@ -41,7 +44,7 @@
         names = filterBySet(names, ["DOMError", "defaultstatus"]);
 
         // https://tc39.es/ecma262/
-        names = filterBySet(names, ["globalThis", "Infinity", "NaN", "undefined", "eval", "isFinite", "isNaN", "parseFloat", "parseInt", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", "Array", "ArrayBuffer", "BigInt", "BigInt64Array", "BigUint64Array", "Boolean", "DataView", "Date", "Error", "EvalError", "FinalizationRegistry", "Float32Array", "Float64Array", "Function", "Int8Array", "Int16Array", "Int32Array", "Map", "Number", "Object", "Promise", "Proxy", "RangeError", "ReferenceError", "RegExp", "Set", "SharedArrayBuffer", "String", "Symbol", "SyntaxError", "TypeError", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "URIError", "WeakMap", "WeakRef", "WeakSet", "Atomics", "JSON", "Math", "Reflect"]);
+        names = filterBySet(names, ["globalThis", "Infinity", "NaN", "undefined", "eval", "isFinite", "isNaN", "parseFloat", "parseInt", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", "Array", "ArrayBuffer", "BigInt", "BigInt64Array", "BigUint64Array", "Boolean", "DataView", "Date", "Error", "EvalError", "FinalizationRegistry", "Float32Array", "Float64Array", "Function", "Int8Array", "Int16Array", "Int32Array", "Map", "Number", "Object", "Promise", "Proxy", "RangeError", "ReferenceError", "RegExp", "Set", "SharedArrayBuffer", "String", "Symbol", "SyntaxError", "TypeError", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "URIError", "WeakMap", "WeakRef", "WeakSet", "Atomics", "JSON", "Math", "Reflect", "AggregateError"]);
         // https://console.spec.whatwg.org/
         // https://tc39.es/ecma402/
         names = filterBySet(names, ["console", "Intl"]);
@@ -176,12 +179,12 @@
         names = filterBySetFromBase(names, ["DOMPointReadOnly", "DOMRectReadOnly", "DOMRectList", "DOMQuad", "DOMMatrixReadOnly"]);
         // https://heycam.github.io/webidl/
         names = filterBySetFromBase(names, ["DOMException"]);
-        // https://heycam.github.io/webidl/
-        names = filterBySetFromBase(names, ["crypto", "Crypto", "CryptoKey", "SubtleCrypto"]);
+        // https://www.w3.org/TR/WebCryptoAPI/
+        names = filterBySetFromBase(names, ["Crypto", "CryptoKey", "SubtleCrypto"]);
         // https://w3c.github.io/clipboard-apis/
-        names = filterBySetFromBase(names, ["Clipboard", "ClipboardItem"]);
+        names = filterBySet(names, ["Clipboard", "ClipboardItem"]);
         // https://w3c.github.io/battery/
-        names = filterBySetFromBase(names, ["BatteryManager"]);
+        names = filterBySet(names, ["BatteryManager"]);
 
         console.assert(names.length == 0, "have unidentified identifier(s)", names);
     }();
