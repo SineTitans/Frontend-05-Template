@@ -1,8 +1,22 @@
 import { createElement, Component, Fragment } from "./framework";
 
 class Carousel extends Component {
+    constructor() {
+        super();
+        this.attributes = Object.create(null);
+    }
+    setAttribute(name, value) {
+        this.attributes[name] = value;
+    }
     render() {
-        return document.createElement("div");
+        this.root = document.createElement("div");
+        for (let record of this.attributes.src) {
+            let child = document.createElement("img");
+            child.src = record;
+            this.root.appendChild(child);
+        }
+        console.log(this.attributes.src);
+        return this.root;
     }
 }
 
@@ -13,6 +27,6 @@ let imgs = [
     "https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg",
 ]
 
-let a = <Carousel />;
+let a = <Carousel src={imgs} />;
 
 a.mountTo(document.body);
