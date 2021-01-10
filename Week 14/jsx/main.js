@@ -42,6 +42,18 @@ class TextWrapper {
     }
 }
 
+class Fragment {
+    constructor() {
+        this.root = document.createDocumentFragment()
+    }
+    appendChild(child) {
+        child.mountTo(this.root);
+    }
+    mountTo(parent) {
+        parent.appendChild(this.root);
+    }
+}
+
 class Div {
     constructor() {
         this.root = document.createElement("div");
@@ -57,8 +69,8 @@ class Div {
     }
 }
 
-let a = <div id="a">
+let a = <Fragment>
     <span>Hello, world!</span>
-</div>;
+</Fragment>;
 
 a.mountTo(document.body);
