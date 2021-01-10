@@ -69,8 +69,8 @@ class Div {
     }
 }
 
-let a = <Fragment>
+let a = <>
     <span>Hello, world!</span>
-</Fragment>;
+</>;
 
 a.mountTo(document.body);
