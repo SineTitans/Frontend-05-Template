@@ -2,7 +2,7 @@ module.exports = {
     entry: {
         "main": "./main.js",
         "animation-demo": "./animation-demo.js",
-        "gesture": "./gesture.js",
+        "gesture-demo": "./gesture-demo.js",
     },
     module: {
         rules: [
