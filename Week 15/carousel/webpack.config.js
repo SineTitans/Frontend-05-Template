@@ -1,7 +1,8 @@
 module.exports = {
     entry: {
         "main": "./main.js",
-        "animation-demo": "./animation-demo.js"
+        "animation-demo": "./animation-demo.js",
+        "gesture": "./gesture.js",
     },
     module: {
         rules: [
