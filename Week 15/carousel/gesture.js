@@ -87,6 +87,11 @@ let isTap = true, isPan = false, isPress = false;
 
 let start = (point, context) => {
     context.startX = point.clientX, context.startY = point.clientY;
+    context.points = [{
+        t: Date.now(),
+        x: point.clientX,
+        y: point.clientY,
+    }];
 
     context.isTap = true, context.isPan = false, context.isPress = false;
 
@@ -110,11 +115,19 @@ let move = (point, context) => {
         console.log(dx, dy);
         console.log("pan");
     }
+
+    context.points = context.points.filter(p => Date.now() - p.t < 500);
+
+    context.points.push({
+        t: Date.now(),
+        x: point.clientX,
+        y: point.clientY,
+    });
 };
 
 let end = (point, context) => {
     if (context.isTap) {
-        console.log("tap");
+        dispatch("tap", {});
         clearTimeout(context.handler);
     }
     if (context.isPan) {
@@ -123,9 +136,29 @@ let end = (point, context) => {
     if (context.isPress) {
         console.log("press end");
     }
+
+    context.points = context.points.filter(p => Date.now() - p.t < 500);
+
+    if (context.points.length > 0) {
+        let dx = point.clientX - context.points[0].x;
+        let dy = point.clientY - context.points[0].y;
+        let dis = Math.sqrt(dx * dx + dy * dy);
+        let v = dis / (Date.now() - context.points[0].t);
+        if (v > 1.5) {
+            console.log("flick");
+        }
+    }
 };
 
 let cancel = (point, context) => {
     clearTimeout(context.handler);
     console.log("cancel", point.clientX, point.clientY);
 };
+
+function dispatch(type, properties) {
+    let event = new Event(type)
+    for (let name in properties) {
+        event[name] = properties[name];
+    }
+    element.dispatchEvent(event);
+}
