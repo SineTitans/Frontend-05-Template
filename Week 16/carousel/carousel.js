@@ -35,8 +35,14 @@ export class Carousel extends Component {
             timeline.pause();
             clearInterval(handler);
             handler = null;
-            let progress = (Date.now() - t) / 500;
-            ax = ease(progress) * 500 - 500;
+            let dt = Date.now() - t;
+            if (dt < 500) {
+                let progress = dt / 500;
+                ax = ease(progress) * 500 - 500;
+            }
+            else {
+                ax = 0;
+            }
         });
         this.root.addEventListener("pan", event => {
             let x = event.clientX - event.startX - ax;
