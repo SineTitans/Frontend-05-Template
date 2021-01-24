@@ -6,9 +6,6 @@ import { ease } from './ease';
 export { STATE, ATTRIBUTE } from './framework';
 
 export class Carousel extends Component {
-    constructor() {
-        super();
-    }
     render() {
         this.root = document.createElement("div");
         this.root.classList.add('carousel');
