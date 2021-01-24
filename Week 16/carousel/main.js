@@ -1,5 +1,5 @@
 import { createElement } from "./framework";
-import { Carousel } from "./carousel";
+import { Carousel } from "./Carousel";
 
 let imgs = [
     {
