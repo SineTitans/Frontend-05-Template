@@ -1,22 +1,20 @@
-import { Component } from './framework';
+import { Component, STATE, ATTRIBUTE } from './framework';
 import { enableGesture } from './gesture';
 import { Animation, Timeline } from './animation';
 import { ease } from './ease';
 
+export { STATE, ATTRIBUTE } from './framework';
+
 export class Carousel extends Component {
     constructor() {
         super();
-        this.attributes = Object.create(null);
-    }
-    setAttribute(name, value) {
-        this.attributes[name] = value;
     }
     render() {
         this.root = document.createElement("div");
         this.root.classList.add('carousel');
-        for (let record of this.attributes.src) {
+        for (let record of this[ATTRIBUTE].src) {
             let child = document.createElement("div");
-            child.style.backgroundImage = `url(${record})`;
+            child.style.backgroundImage = `url(${record.img})`;
             this.root.appendChild(child);
         }
         enableGesture(this.root);
@@ -26,7 +24,7 @@ export class Carousel extends Component {
         let handler = null;
 
         let children = this.root.children;
-        let position = 0;
+        this[STATE].position = 0;
 
         let t = 0;
         let ax = 0;
@@ -44,9 +42,16 @@ export class Carousel extends Component {
                 ax = 0;
             }
         });
+        this.root.addEventListener("tap", event => {
+            let position = this[STATE].position;
+            this.triggerEvent("click", {
+                data: this[ATTRIBUTE].src[position],
+                position,
+            });
+        });
         this.root.addEventListener("pan", event => {
             let x = event.clientX - event.startX - ax;
-            let current = position - ((x - x % 500) / 500);
+            let current = this[STATE].position - ((x - x % 500) / 500);
             for (let offset of [1, 0, -1]) {
                 let pos = (current + offset) % children.length;
                 pos = (pos + children.length) % children.length;
@@ -61,7 +66,7 @@ export class Carousel extends Component {
             handler = setInterval(nextPicture, 3000);
 
             let x = event.clientX - event.startX - ax;
-            let current = position - ((x - x % 500) / 500);
+            let current = this[STATE].position - ((x - x % 500) / 500);
 
             let direction = Math.round((x % 500) / 500);
 
@@ -84,22 +89,24 @@ export class Carousel extends Component {
                     -pos * 500 + offset * 500 + direction * 500,
                     500, 0, ease, v => `translateX(${v}px)`));
             }
-            position = (position - ((x - x % 500) / 500) - direction) % children.length;
-            position = (position + children.length) % children.length;
+            this[STATE].position = (this[STATE].position - ((x - x % 500) / 500) - direction) % children.length;
+            this[STATE].position = (this[STATE].position + children.length) % children.length;
+            this.triggerEvent("change", { position: this[STATE].position });
         });
 
         let nextPicture = () => {
             let children = this.root.children;
-            let nextIndex = (position + 1) % children.length;
-            let current = children[position];
+            let nextIndex = (this[STATE].position + 1) % children.length;
+            let current = children[this[STATE].position];
             let next = children[nextIndex];
 
             t = Date.now();
 
-            timeline.add(new Animation(current.style, "transform", -position * 500, -500 - position * 500, 500, 0, ease, v => `translateX(${v}px)`));
+            timeline.add(new Animation(current.style, "transform", -this[STATE].position * 500, -500 - this[STATE].position * 500, 500, 0, ease, v => `translateX(${v}px)`));
             timeline.add(new Animation(next.style, "transform", 500 - nextIndex * 500, -nextIndex * 500, 500, 0, ease, v => `translateX(${v}px)`));
 
-            position = nextIndex;
+            this[STATE].position = nextIndex;
+            this.triggerEvent("change", { position: this[STATE].position });
         }
 
         handler = setInterval(nextPicture, 3000);

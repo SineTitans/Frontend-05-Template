@@ -18,17 +18,32 @@ export function createElement(type, attributes, ...children) {
     return element;
 }
 
+export const STATE = Symbol('state');
+export const ATTRIBUTE = Symbol('attribute');
+
 export class Component {
     constructor() {
+        this[ATTRIBUTE] = Object.create(null);
+        this[STATE] = Object.create(null);
     }
     setAttribute(name, value) {
-        this.root.setAttribute(name, value);
+        this[ATTRIBUTE][name] = value;
     }
     appendChild(child) {
         child.mountTo(this.root);
     }
     mountTo(parent) {
-        parent.appendChild(this.render());
+        if (!this.root) {
+            this.render();
+        }
+        parent.appendChild(this.root);
+    }
+    triggerEvent(type, args) {
+        type = type.replace(/^[\s\S]/, s => s.toUpperCase());
+        let callback = this[ATTRIBUTE][`on${type}`];
+        if (callback) {
+            callback.call(this, new CustomEvent(type, { detail: args }));
+        }
     }
 }
 
