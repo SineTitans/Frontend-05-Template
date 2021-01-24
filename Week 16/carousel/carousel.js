@@ -20,67 +20,84 @@ export class Carousel extends Component {
             this.root.appendChild(child);
         }
         enableGesture(this.root);
+        let timeline = new Timeline;
+        timeline.start();
+
+        let handler = null;
 
         let children = this.root.children;
         let position = 0;
+
+        let t = 0;
+        let ax = 0;
         
+        this.root.addEventListener("start", event => {
+            timeline.pause();
+            clearInterval(handler);
+            handler = null;
+            let progress = (Date.now() - t) / 500;
+            ax = ease(progress) * 500 - 500;
+        });
         this.root.addEventListener("pan", event => {
-            console.log(event.clientX);
+            let x = event.clientX - event.startX - ax;
+            let current = position - ((x - x % 500) / 500);
+            for (let offset of [1, 0, -1]) {
+                let pos = (current + offset) % children.length;
+                pos = (pos + children.length) % children.length;
+                let child = children[pos];
+                child.style.transition = "none";
+                child.style.transform = `translateX(${-pos * 500 + offset * 500 + x % 500}px)`;
+            }
+        });
+        this.root.addEventListener("end", event => {
+            timeline.reset();
+            timeline.start();
+            handler = setInterval(nextPicture, 3000);
+
+            let x = event.clientX - event.startX - ax;
+            let current = position - ((x - x % 500) / 500);
+
+            let direction = Math.round((x % 500) / 500);
+
+            if (event.isFlick) {
+                if (event.velocity > 0) {
+                    direction = Math.floor((x % 500) / 500);
+                }
+                else {
+                    direction = Math.ceil((x % 500) / 500);
+                }
+            }
+
+            for (let offset of [1, 0, -1]) {
+                let pos = (current + offset) % children.length;
+                pos = (pos + children.length) % children.length;
+                let child = children[pos];
+                child.style.transition = "none";
+                timeline.add(new Animation(child.style, "transform",
+                    -pos * 500 + offset * 500 + x % 500,
+                    -pos * 500 + offset * 500 + direction * 500,
+                    500, 0, ease, v => `translateX(${v}px)`));
+            }
+            position = (position - ((x - x % 500) / 500) - direction) % children.length;
+            position = (position + children.length) % children.length;
         });
 
-        // this.root.addEventListener("mousedown", event => {
-        //     let children = this.root.children;
-        //     let startX = event.clientX;
+        let nextPicture = () => {
+            let children = this.root.children;
+            let nextIndex = (position + 1) % children.length;
+            let current = children[position];
+            let next = children[nextIndex];
 
-        //     let move = event => {
-        //         let x = event.clientX - startX;
-        //         let current = position - ((x - x % 500) / 500);
+            t = Date.now();
 
-        //         for (let offset of [1, 0, -1]) {
-        //             let pos = current + offset;
-        //             pos = (pos + children.length) % children.length;
-        //             let child = children[pos];
-        //             child.style.transition = "none";
-        //             child.style.transform = `translateX(${-pos * 500 + offset * 500 + x % 500}px)`;
-        //         }
-        //     };
+            timeline.add(new Animation(current.style, "transform", -position * 500, -500 - position * 500, 500, 0, ease, v => `translateX(${v}px)`));
+            timeline.add(new Animation(next.style, "transform", 500 - nextIndex * 500, -nextIndex * 500, 500, 0, ease, v => `translateX(${v}px)`));
 
-        //     let up = event => {
-        //         let x = event.clientX - startX;
-        //         position = (position % children.length) + children.length - Math.round(x / 500);
-        //         for (let offset of [0, -Math.sign(Math.round(x / 500) - x + 250 * Math.sign(x))]) {
-        //             let pos = position + offset;
-        //             pos = (pos + children.length) % children.length;
-        //             let child = children[pos];
-        //             child.style.transition = "";
-        //             child.style.transform = `translateX(${-pos * 500 + offset * 500}px)`;
-        //         }
-        //         document.removeEventListener("mousemove", move);
-        //         document.removeEventListener("mouseup", up);
-        //     };
+            position = nextIndex;
+        }
 
-        //     document.addEventListener("mousemove", move);
-        //     document.addEventListener("mouseup", up);
-        // });
+        handler = setInterval(nextPicture, 3000);
 
-        // let currentIndex = 0;
-
-        // setInterval(() => {
-        //     let children = this.root.children;
-        //     let nextIndex = (currentIndex + 1) % children.length;
-        //     let current = children[currentIndex];
-        //     let next = children[nextIndex];
-
-        //     next.style.transition = "none";
-
-        //     next.style.transform = `translateX(${1 - nextIndex}00%)`;
-        //     setTimeout(() => {
-        //         next.style.transition = "";
-        //         current.style.transform = `translateX(${-1 - currentIndex}00%)`;
-        //         next.style.transform = `translateX(${-nextIndex}00%)`;
-        //         currentIndex = nextIndex;
-        //     }, 16);
-        // }, 3000);
         return this.root;
     }
 }
