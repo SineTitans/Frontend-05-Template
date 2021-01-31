@@ -1,1 +1,31 @@
-学习笔记
+# 学习笔记
+
+* yeoman
+  * 安装使用
+    1. 作用：编写generator的generator
+    1. 项目安装：yeoman-generator
+    1. 全局命令：yo
+    1. generator项目名必须为generator-\<script\>
+    1. generator类的所有方法将被依次执行
+    1. generator项目需要link到全局以便yo命令访问
+    1. 在当前目录执行generator：yo \<script\>
+  * 常用API
+    1. log：向控制台输出内容
+    1. prompt：从控制台获取输入
+    1. extendJSON：写JSON文件（如package.json）
+    1. npmInstall/yarnInstall：安装项目依赖
+    1. fs.copyTpl：将模板文件拷贝到项目目录
+* webpack
+  1. 作用：将入口js引用的全部资源打包到一个js文件中，供浏览器环境使用
+  1. 配置文件：webpack.config.js
+  1. entry：执行打包的入口文件，webpack会查找其所有依赖进行打包
+  1. output：打包结果输出位置
+  1. module.rules：定义文件处理规则，用test匹配成功的文件会进入use中定义的loader流水线处理。loader也可能会有自己的配置项
+  1. plugins：插件，打包流程中有的loader会依赖特定plugins，也可用于执行打包流程之外的其他操作
+* babel
+  1. 作用：将高版本js翻译为低版本js
+  1. 安装：@babel/core
+  1. 命令行使用：@babel/cli
+  1. 预制配置集：@babel/preset-env
+  1. webpack插件：babel-loader
+  1. 配置文件：.babelrc（babel-loader使用时不生效）
