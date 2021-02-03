@@ -343,8 +343,8 @@
         <path d="M0 12899.34c-13.5 0-13.5 31.5-13.5 63 0 25.55 0 51.11-7.21 59.84l-.32.16" class="st5" />
     </g>
     <g id="shape116-487" transform="translate(745.335 -5234.67)">
-        <path d="M0 12881.34h90" class="st3" /><text x="30" y="12864.54" class="st4">类选择<tspan x="12.5" dy="1.2em"
-                class="st8">器</tspan> .className</text></g>
+        <path d="M0 12881.34h90" class="st3" /><text x="25" y="12864.54" class="st4">类选择器<tspan x="18" dy="1.2em"
+                class="st8">.className</tspan></text></g>
     <g id="shape117-492" transform="translate(862.335 -5315.67)">
         <path d="M0 12899.34c-11.34 0-13.15 44.45-21.44 58.67l-.29.23" class="st5" />
     </g>
