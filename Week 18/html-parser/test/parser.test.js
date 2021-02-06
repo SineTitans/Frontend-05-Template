@@ -28,6 +28,11 @@ describe("parse html:", function () {
         assert.strictEqual(tree.children.length, 1);
         assert.strictEqual(tree.children[0].children.length, 0);
     });
+    it('<a id=abc></a>', function () {
+        let tree = parseHTML('<a id=abc></a>');
+        assert.strictEqual(tree.children.length, 1);
+        assert.strictEqual(tree.children[0].children.length, 0);
+    });
     it('<a id=abc/>', function () {
         let tree = parseHTML('<a id=abc/>');
         assert.strictEqual(tree.children.length, 1);
@@ -50,6 +55,18 @@ describe("parse html:", function () {
     });
     it("<>", function () {
         let tree = parseHTML("<>");
+        assert.strictEqual(tree.children.length, 1);
+        assert.strictEqual(tree.children[0].type, 'text');
+    });
+    it("<meta >", function () {
+        let tree = parseHTML("<meta >");
+        assert.strictEqual(tree.children.length, 0);
+    });
+    it("<a></div>", function () {
+        assert.throws(() => parseHTML("<a></div>"));
+    });
+    it("text", function () {
+        let tree = parseHTML("text");
         assert.strictEqual(tree.children.length, 1);
         assert.strictEqual(tree.children[0].type, 'text');
     });
