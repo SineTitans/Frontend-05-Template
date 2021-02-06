@@ -89,7 +89,11 @@ function tagOpen(c) {
         }
         return tagName(c);
     }
-    return;
+    emit({
+        type: "text",
+        content: c,
+    })
+    return data;
 }
 
 function endTagOpen(c) {
