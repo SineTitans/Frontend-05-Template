@@ -296,6 +296,9 @@ export function parseHTML(html) {
     stack = [
         { type: 'document', children: [] },
     ];
+    currentToken = null;
+    currentAttribute = null;
+    currentTextNode = null;
 
     let state = data;
     for (let c of html) {
