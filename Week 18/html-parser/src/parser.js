@@ -195,7 +195,7 @@ function doubleQuotedAttributeValue(c) {
         return;
     }
     if (c == EOF) {
-        return;
+        throw new Error("invalid attribute value");
     }
     currentAttribute.value += c;
     return doubleQuotedAttributeValue;
@@ -210,7 +210,7 @@ function singleQuotedAttributeValue(c) {
         return;
     }
     if (c == EOF) {
-        return;
+        throw new Error("invalid attribute value");
     }
     currentAttribute.value += c;
     return singleQuotedAttributeValue;
@@ -218,7 +218,7 @@ function singleQuotedAttributeValue(c) {
 
 function UnquotedAttributeValue(c) {
     if (c == EOF) {
-        return;
+        throw new Error("invalid attribute value");
     }
     if (c.match(/^[\t\n\f ]$/)) {
         currentToken[currentAttribute.name] = currentAttribute.value;
@@ -292,7 +292,7 @@ function selfClosingStartTag(c) {
         return data;
     }
     if (c == EOF) {
-        return;
+        throw new Error("have not close current tag");
     }
     return;
 }
