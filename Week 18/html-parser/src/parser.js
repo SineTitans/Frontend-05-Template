@@ -246,7 +246,7 @@ function UnquotedAttributeValue(c) {
 
 function afterQuotedAttributeValue(c) {
     if (c == EOF) {
-        return;
+        throw new Error("have not close current tag");
     }
     if (c.match(/^[\t\n\f ]$/)) {
         return beforeAttributeName;
@@ -264,7 +264,7 @@ function afterQuotedAttributeValue(c) {
 
 function afterAttributeName(c) {
     if (c == EOF) {
-        return;
+        throw new Error("have not close current tag");
     }
     if (c.match(/^[\t\n\f ]$/)) {
         return afterAttributeName;

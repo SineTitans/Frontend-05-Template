@@ -119,4 +119,22 @@ describe("parse html:", function () {
     it("<a href=a", function () {
         assert.throws(() => parseHTML("<a href=a"));
     });
+    it("<a href=\u0000", function () {
+        assert.throws(() => parseHTML("<a href=\u0000"));
+    });
+    it("<a href=a'", function () {
+        assert.throws(() => parseHTML("<a href=a'"));
+    });
+    it("<a id ='a'c />", function () {
+        assert.throws(() => parseHTML("<a id ='a'c />"));
+    });
+    it("<a id='a'", function () {
+        assert.throws(() => parseHTML("<a id='a'"));
+    });
+    it("<a id", function () {
+        assert.throws(() => parseHTML("<a id"));
+    });
+    it("<a id ='a' /=>", function () {
+        assert.throws(() => parseHTML("<a id ='a' /=>"));
+    });
 });
