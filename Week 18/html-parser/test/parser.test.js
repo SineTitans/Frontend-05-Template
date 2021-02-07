@@ -75,4 +75,10 @@ describe("parse html:", function () {
         assert.strictEqual(tree.children.length, 1);
         assert.strictEqual(tree.children[0].type, 'text');
     });
+    it("<a></>", function () {
+        assert.throws(() => parseHTML("<a></>"));
+    });
+    it("<a></", function () {
+        assert.throws(() => parseHTML("<a></"));
+    });
 });

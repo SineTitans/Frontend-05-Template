@@ -97,6 +97,9 @@ function tagOpen(c) {
 }
 
 function endTagOpen(c) {
+    if (c == EOF) {
+        throw new Error("have not close current tag");
+    }
     if (c.match(/^[a-zA-Z]$/)) {
         currentToken = {
             type: "endTag",
@@ -105,9 +108,6 @@ function endTagOpen(c) {
         return tagName(c);
     }
     if (c == '>') {
-        return;
-    }
-    if (c == EOF) {
         return;
     }
     return;
@@ -137,11 +137,11 @@ function tagName(c) {
 }
 
 function beforeAttributeName(c) {
-    if (c.match(/^[\t\n\f ]$/)) {
-        return beforeAttributeName;
-    }
     if (c == '/' || c == '>' || c == EOF) {
         return afterAttributeName(c);
+    }
+    if (c.match(/^[\t\n\f ]$/)) {
+        return beforeAttributeName;
     }
     if (c == '=') {
         return;
@@ -153,7 +153,7 @@ function beforeAttributeName(c) {
 }
 
 function attributeName(c) {
-    if (c.match(/^[\t\n\f ]$/) || c == '/' || c == '>' || c == EOF) {
+    if (c == EOF || c.match(/^[\t\n\f ]$/) || c == '/' || c == '>') {
         return afterAttributeName(c);
     }
     if (c == '=') {
@@ -170,7 +170,7 @@ function attributeName(c) {
 }
 
 function beforeAttributeValue(c) {
-    if (c.match(/^[\t\n\f ]$/) || c == EOF) {
+    if (c == EOF || c.match(/^[\t\n\f ]$/)) {
         return beforeAttributeValue;
     }
     if (c == '"') {
@@ -216,6 +216,9 @@ function singleQuotedAttributeValue(c) {
 }
 
 function UnquotedAttributeValue(c) {
+    if (c == EOF) {
+        return;
+    }
     if (c.match(/^[\t\n\f ]$/)) {
         currentToken[currentAttribute.name] = currentAttribute.value;
         return beforeAttributeName;
@@ -236,14 +239,14 @@ function UnquotedAttributeValue(c) {
     if (c == '"' || c == "'" || c == '<' || c == '=' || c == '`') {
         return;
     }
-    if (c == EOF) {
-        return;
-    }
     currentAttribute.value += c;
     return UnquotedAttributeValue;
 }
 
 function afterQuotedAttributeValue(c) {
+    if (c == EOF) {
+        return;
+    }
     if (c.match(/^[\t\n\f ]$/)) {
         return beforeAttributeName;
     }
@@ -255,13 +258,13 @@ function afterQuotedAttributeValue(c) {
         emit(currentToken);
         return data;
     }
-    if (c == EOF) {
-        return;
-    }
     return;
 }
 
 function afterAttributeName(c) {
+    if (c == EOF) {
+        return;
+    }
     if (c.match(/^[\t\n\f ]$/)) {
         return afterAttributeName;
     }
@@ -275,9 +278,6 @@ function afterAttributeName(c) {
     if (c == '>') {
         emit(currentToken);
         return data;
-    }
-    if (c == EOF) {
-        return;
     }
     currentAttribute = {
         name: "", value: "",
