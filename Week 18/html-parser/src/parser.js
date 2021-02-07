@@ -126,13 +126,14 @@ function tagName(c) {
         return selfClosingStartTag;
     }
     if (c.match(/^[a-zA-Z]$/)) {
-        currentToken.tagName += c;
+        currentToken.tagName += c.toLowerCase();
         return tagName;
     }
     if (c == '>') {
         emit(currentToken);
         return data;
     }
+    currentToken.tagName += c;
     return tagName;
 }
 

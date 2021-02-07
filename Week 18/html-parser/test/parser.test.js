@@ -81,4 +81,12 @@ describe("parse html:", function () {
     it("<a></", function () {
         assert.throws(() => parseHTML("<a></"));
     });
+    it("<a><//", function () {
+        assert.throws(() => parseHTML("<a><//"));
+    });
+    it("<a3></a3>", function () {
+        let tree = parseHTML("<a3></a3>");
+        assert.strictEqual(tree.children.length, 1);
+        assert.strictEqual(tree.children[0].children.length, 0);
+    });
 });
