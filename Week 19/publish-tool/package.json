@@ -1,0 +1,9 @@
+{
+  "name": "publish-tool",
+  "version": "1.0.0",
+  "main": "publish.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./publish.js"
+  }
+}
