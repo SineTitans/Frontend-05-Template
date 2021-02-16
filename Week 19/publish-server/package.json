@@ -4,6 +4,7 @@
   "main": "server.js",
   "license": "MIT",
   "scripts": {
-    "start": "node ./server.js"
+    "start": "node ./server.js",
+    "publish": "scp -r -P 22 ./* crescent@172.18.0.76:/home/crescent/publish-server"
   }
 }

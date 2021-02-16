@@ -1,9 +1,8 @@
 let http = require('http');
-
 let fs = require('fs');
 
 let request = http.request({
-    hostname: "127.0.0.1",
+    hostname: "172.18.0.76",
     port: 8082,
     method: "POST",
     headers: {
@@ -19,7 +18,7 @@ let request = http.request({
     })
 });
 
-let file = fs.createReadStream("./package.json");
+let file = fs.createReadStream("./sample.html");
 
 file.on('data', function (chunk) {
     console.log(chunk.toString());
