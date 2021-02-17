@@ -5,5 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node ./publish.js"
+  },
+  "dependencies": {
+    "archiver": "^5.2.0"
   }
 }

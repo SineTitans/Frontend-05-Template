@@ -6,5 +6,8 @@
   "scripts": {
     "start": "node ./server.js",
     "publish": "scp -r -P 22 ./* crescent@172.30.167.94:/home/crescent/publish-server"
+  },
+  "dependencies": {
+    "unzipper": "^0.10.11"
   }
 }
