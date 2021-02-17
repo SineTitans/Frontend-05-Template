@@ -12,3 +12,4 @@ let request = http.request({
 
 let file = fs.createReadStream("./sample.html");
 file.pipe(request);
+file.on('end', () => request.end());
