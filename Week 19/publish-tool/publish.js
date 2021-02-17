@@ -8,23 +8,7 @@ let request = http.request({
     headers: {
         'Content-Type': 'application/octet-stream',
     }
-}, function (resp) {
-    console.log('result headers:', resp.headers);
-    resp.on('data', function (chunk) {
-        console.log(chunk.toString());
-    });
-    resp.on('end', function () {
-        console.log('complete.');
-    })
-});
+}, resp => resp.pipe(process.stdout));
 
 let file = fs.createReadStream("./sample.html");
-
-file.on('data', function (chunk) {
-    console.log(chunk.toString());
-    request.write(chunk);
-});
-file.on('end', function () {
-    console.log('read finished');
-    request.end();
-});
+file.pipe(request);
